@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
+import FounderModal from "../components/FounderModal";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },
@@ -14,7 +15,7 @@ const stagger = {
 /* ══════════════════════════════════════════
    NAVBAR
 ══════════════════════════════════════════ */
-function Navbar() {
+function Navbar({ onOpenModal }) {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -49,7 +50,7 @@ function Navbar() {
         </Link>
 
         <ul style={{ display: "flex", alignItems: "center", gap: "0.25rem", listStyle: "none", padding: 0, margin: 0 }}>
-          {[["inicio", "Simulador"], ["como-funciona", "Cómo Funciona"], ["seguridad", "Seguridad"]].map(([id, label]) => (
+          {[["inicio", "Simulador"], ["como-funciona", "Cómo Funciona"], ["seguridad", "Seguridad"], ["cohorte-fundadora", "Acceso Fundador"]].map(([id, label]) => (
             <li key={id}>
               <a href={`#${id}`} onClick={(e) => smooth(e, id)} style={{ padding: "0.5rem 1rem", borderRadius: 999, fontSize: "0.875rem", fontWeight: 500, color: "#3e4850", transition: "all 0.2s", display: "block" }}
                 onMouseEnter={e => { e.target.style.background = "var(--surface-container-low)"; e.target.style.color = "#131b2e"; }}
@@ -62,7 +63,12 @@ function Navbar() {
 
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <Link to="/login" className="btn-ghost btn-sm" style={{ textDecoration: "none" }}>Iniciar Sesión</Link>
-          <Link to="/register" className="btn-primary btn-sm" style={{ textDecoration: "none" }}>Crear Cuenta</Link>
+          <button onClick={() => onOpenModal("register")} className="btn-primary btn-sm" style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+            Solicitar Acceso
+          </button>
         </div>
       </div>
     </nav>
@@ -70,17 +76,21 @@ function Navbar() {
 }
 
 /* ══════════════════════════════════════════
-   HERO — simulador compacto glassmorphic
+   HERO — simulador con pricing Fundador
 ══════════════════════════════════════════ */
-function HeroSection() {
+function HeroSection({ onOpenModal }) {
   const { scrollY } = useScroll();
   useTransform(scrollY, [0, 400], [0, -80]);
 
   const [heroAmount, setHeroAmount] = useState(500000);
   const [heroCtaHov, setHeroCtaHov] = useState(false);
   const HERO_MIN = 100000, HERO_MAX = 5000000;
-  const heroCommission = Math.round(heroAmount * 0.12);
-  const heroNet = heroAmount - heroCommission;
+  
+  // Pricing dual: 12% tachado vs 10% Fundador
+  const standardCommission = Math.round(heroAmount * 0.12);
+  const founderCommission = Math.round(heroAmount * 0.10);
+  const heroNet = heroAmount - founderCommission;
+  const savings = standardCommission - founderCommission;
   const heroPct = ((heroAmount - HERO_MIN) / (HERO_MAX - HERO_MIN)) * 100;
   const fmt = (n) => "$ " + Math.round(n).toLocaleString("es-CO").replace(/,/g, ".");
 
@@ -102,7 +112,7 @@ function HeroSection() {
           <motion.div variants={fadeUp}>
             <span style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "0.375rem 1rem", background: "rgba(14,165,233,0.1)", borderRadius: 999, fontSize: "0.7rem", fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", color: "#006591", marginBottom: "1.5rem" }}>
               <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#0EA5E9", boxShadow: "0 0 8px #0EA5E9", animation: "pulse-glow 2s infinite" }} />
-              Efectivo Inmediato Desde Tu Tarjeta
+              Cohorte Fundadora · Acceso Limitado
             </span>
           </motion.div>
 
@@ -113,7 +123,7 @@ function HeroSection() {
 
           <motion.p variants={fadeUp} style={{ fontSize: "1.05rem", color: "#3e4850", lineHeight: 1.7, maxWidth: 460, marginBottom: "2rem" }}>
             Transforma el cupo de tu tarjeta de crédito en efectivo al instante.
-            Comisión fija del 12%, sin costos ocultos, en menos de 5 minutos.
+            <strong style={{ color: "#131b2e" }}> Tarifa Fundador del 10%</strong>, sin costos ocultos, en menos de 5 minutos.
           </motion.p>
 
           <motion.div variants={fadeUp} style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginBottom: "3rem" }}>
@@ -121,17 +131,19 @@ function HeroSection() {
               onClick={e => { e.preventDefault(); document.getElementById("como-funciona")?.scrollIntoView({ behavior: "smooth" }); }}>
               ¿Cómo funciona?
             </a>
-            <Link to="/register" className="btn-primary btn-lg" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: 6 }}>
-              Crear cuenta gratis
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
-            </Link>
+            <button onClick={() => onOpenModal("register")} className="btn-primary btn-lg" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              </svg>
+              Solicitar Acceso Fundador
+            </button>
           </motion.div>
 
           <motion.div variants={fadeUp} style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem" }}>
             {[
               { val: "< 5 min", label: "Tiempo de envío", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" strokeWidth="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12" /></svg> },
-              { val: "12%", label: "Comisión fija", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" strokeWidth="2"><line x1="19" y1="5" x2="5" y2="19" /><circle cx="6.5" cy="6.5" r="2.5" /><circle cx="17.5" cy="17.5" r="2.5" /></svg> },
-              { val: "100%", label: "Cifrado seguro", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg> },
+              { val: "10%", label: "Tarifa Fundador", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg> },
+              { val: "100%", label: "Cifrado seguro", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg> },
             ].map(({ val, label, icon }) => (
               <div key={label} style={{ background: "rgba(255,255,255,0.7)", backdropFilter: "blur(12px)", borderRadius: 16, padding: "1rem 1.25rem", boxShadow: "0 4px 16px rgba(19,27,46,0.06)" }}>
                 <div style={{ marginBottom: 6 }}>{icon}</div>
@@ -142,7 +154,7 @@ function HeroSection() {
           </motion.div>
         </motion.div>
 
-        {/* ── RIGHT: Glass Simulator ── */}
+        {/* ── RIGHT: Glass Simulator with Founder Pricing ── */}
         <motion.div
           initial={{ opacity: 0, y: 28, scale: 0.97 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -163,8 +175,14 @@ function HeroSection() {
 
             {/* Title block */}
             <div style={{ marginBottom: "0.875rem", position: "relative" }}>
-              <div style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", color: "#0EA5E9", marginBottom: "0.2rem" }}>
-                Simulador
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.2rem" }}>
+                <div style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", color: "#0EA5E9" }}>
+                  Simulador
+                </div>
+                <span className="founder-pricing-tag">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
+                  FUNDADOR
+                </span>
               </div>
               <div style={{ fontFamily: "Manrope, sans-serif", fontWeight: 800, fontSize: "1rem", color: "#131b2e", letterSpacing: "-0.3px" }}>
                 Elige cuánto efectivo necesitas
@@ -190,7 +208,7 @@ function HeroSection() {
               <input id="hs" type="range" min={HERO_MIN} max={HERO_MAX} step={50000}
                 value={heroAmount} onChange={e => setHeroAmount(Number(e.target.value))} />
               <div style={{ display: "flex", justifyContent: "space-between", marginTop: "0.35rem" }}>
-                <span style={{ fontSize: "0.62rem", color: "#b0bec5", fontWeight: 600 }}>$50.000</span>
+                <span style={{ fontSize: "0.62rem", color: "#b0bec5", fontWeight: 600 }}>$100.000</span>
                 <span style={{ fontSize: "0.62rem", color: "#b0bec5", fontWeight: 600 }}>$5.000.000</span>
               </div>
             </div>
@@ -198,17 +216,42 @@ function HeroSection() {
             {/* Divider */}
             <div style={{ height: 1, background: "rgba(190,200,210,0.3)", marginBottom: "1rem" }} />
 
-            {/* Commission */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.625rem" }}>
-              <span style={{ fontSize: "0.82rem", color: "#6e7881" }}>Comisión Veltron (12%)</span>
-              <motion.span key={heroCommission} initial={{ scale: 1.08 }} animate={{ scale: 1 }}
-                style={{ fontSize: "0.85rem", fontWeight: 700, color: "#ba1a1a" }}>
-                -{fmt(heroCommission)}
+            {/* Dual Commission Pricing — Tachado */}
+            <div className="founder-pricing-row">
+              <span className="founder-pricing-standard">
+                Tarifa estándar: 12% → {fmt(standardCommission)}
+              </span>
+              <motion.span
+                key={`std-${standardCommission}`}
+                initial={{ scale: 1.05 }}
+                animate={{ scale: 1 }}
+                style={{ fontSize: "0.78rem", color: "#ba1a1a", textDecoration: "line-through", fontWeight: 600 }}
+              >
+                -{fmt(standardCommission)}
+              </motion.span>
+            </div>
+
+            <div className="founder-pricing-row" style={{ marginBottom: "0.625rem" }}>
+              <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" strokeWidth="2.5" strokeLinecap="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+                <span className="founder-pricing-founder">
+                  Tarifa Fundador: 10%
+                </span>
+              </span>
+              <motion.span
+                key={`fnd-${founderCommission}`}
+                initial={{ scale: 1.08 }}
+                animate={{ scale: 1 }}
+                style={{ fontSize: "0.85rem", fontWeight: 700, color: "#0EA5E9" }}
+              >
+                -{fmt(founderCommission)}
               </motion.span>
             </div>
 
             {/* Net */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.6rem 0.875rem", background: "rgba(14,165,233,0.07)", borderRadius: 12, marginBottom: "1.125rem" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.6rem 0.875rem", background: "rgba(14,165,233,0.07)", borderRadius: 12, marginBottom: "0.5rem" }}>
               <span style={{ fontSize: "0.88rem", fontWeight: 700, color: "#131b2e" }}>Recibes en tu cuenta</span>
               <motion.span key={heroNet} initial={{ scale: 1.1, opacity: 0.7 }} animate={{ scale: 1, opacity: 1 }}
                 transition={{ type: "spring", stiffness: 280, damping: 20 }}
@@ -217,23 +260,38 @@ function HeroSection() {
               </motion.span>
             </div>
 
+            {/* Savings badge */}
+            <motion.div
+              key={`sav-${savings}`}
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="founder-savings"
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg>
+              Estás ahorrando {fmt(savings)} por ser Usuario Fundador
+            </motion.div>
+
             {/* CTA */}
-            <Link to="/login"
+            <button
+              onClick={() => onOpenModal("register")}
               onMouseEnter={() => setHeroCtaHov(true)}
               onMouseLeave={() => setHeroCtaHov(false)}
               style={{
                 display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem",
-                width: "100%", padding: "0.75rem", borderRadius: 12,
+                width: "100%", padding: "0.75rem", borderRadius: 12, marginTop: "1rem",
                 background: "linear-gradient(135deg, #006591, #0EA5E9)",
                 color: "white", fontFamily: "Manrope, sans-serif", fontWeight: 800, fontSize: "0.9rem",
-                textDecoration: "none", boxSizing: "border-box", transition: "all 0.2s",
+                border: "none", cursor: "pointer", boxSizing: "border-box", transition: "all 0.2s",
                 boxShadow: heroCtaHov ? "0 0 0 3px rgba(14,165,233,0.2), 0 8px 24px rgba(14,165,233,0.45)" : "0 4px 16px rgba(14,165,233,0.35)",
                 transform: heroCtaHov ? "translateY(-1px)" : "none",
               }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              </svg>
               <motion.span key={heroCtaHov ? "h" : "d"} initial={{ opacity: 0, y: 2 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.12 }}>
-                {heroCtaHov ? "Iniciar para Retirar →" : "Obtener Efectivo →"}
+                {heroCtaHov ? "Aplicar como Fundador →" : "Solicitar Acceso Fundador →"}
               </motion.span>
-            </Link>
+            </button>
 
             <p style={{ textAlign: "center", marginTop: "0.6rem", fontSize: "0.67rem", color: "#b0bec5", fontWeight: 500 }}>
               Envío via Nequi · Daviplata · Transferencia bancaria
@@ -272,8 +330,8 @@ function HeroSection() {
 ══════════════════════════════════════════ */
 function StepsSection() {
   const steps = [
-    { step: "01", title: "Crea tu cuenta", desc: "Regístrate en menos de 2 minutos con tu correo y celular.", icon: <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> },
-    { step: "02", title: "Verifica tu identidad", desc: "Sube tu cédula. Validamos que el titular coincida con la tarjeta y la cuenta destino.", icon: <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg> },
+    { step: "01", title: "Solicita tu acceso", desc: "Aplica como Usuario Fundador en menos de 1 minuto. Solo necesitamos tu nombre y WhatsApp.", icon: <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><polyline points="9 12 11 14 15 10" /></svg> },
+    { step: "02", title: "Verifica tu identidad", desc: "Sube tu cédula. Validamos que el titular coincida con la tarjeta y la cuenta destino.", icon: <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> },
     { step: "03", title: "Elige tu monto", desc: "Selecciona cuánto necesitas. Procesamos el cobro como pago de servicio único vía Wompi.", icon: <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12" /></svg> },
     { step: "04", title: "Recibe tu dinero", desc: "En menos de 5 minutos el dinero llega a tu Nequi, Daviplata o cuenta bancaria.", icon: <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="6" width="20" height="12" rx="2" /><circle cx="12" cy="12" r="2" /><path d="M6 12h.01M18 12h.01" /></svg> },
   ];
@@ -347,9 +405,167 @@ function SecuritySection() {
 }
 
 /* ══════════════════════════════════════════
+   FOUNDER SECTION — Cohorte Fundadora
+══════════════════════════════════════════ */
+function FounderSection({ onOpenModal }) {
+  return (
+    <section id="cohorte-fundadora" className="founder-section">
+      <div className="founder-section-glow-1" />
+      <div className="founder-section-glow-2" />
+
+      <div style={{ maxWidth: 900, margin: "0 auto", position: "relative", zIndex: 1 }}>
+        <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }}>
+
+          {/* Badge */}
+          <motion.div variants={fadeUp} style={{ textAlign: "center", marginBottom: "1.5rem" }}>
+            <span style={{
+              display: "inline-flex", alignItems: "center", gap: 10,
+              padding: "0.5rem 1.25rem",
+              background: "rgba(14,165,233,0.15)",
+              border: "1px solid rgba(14,165,233,0.3)",
+              borderRadius: 999,
+              fontSize: "0.72rem", fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase",
+              color: "#89ceff",
+            }}>
+              <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#0EA5E9", boxShadow: "0 0 12px rgba(14,165,233,0.8)", animation: "pulse-glow 2s infinite" }} />
+              Acceso Limitado · 2026
+            </span>
+          </motion.div>
+
+          {/* Title */}
+          <motion.h2 variants={fadeUp} style={{
+            fontFamily: "Manrope, sans-serif",
+            fontSize: "clamp(2rem, 4vw, 3rem)",
+            fontWeight: 800, color: "white",
+            letterSpacing: "-2px", lineHeight: 1.1,
+            textAlign: "center", marginBottom: "1.25rem",
+          }}>
+            Acceso Privado<span style={{ color: "#0EA5E9" }}>:</span><br />
+            Cohorte Fundadora 2026
+          </motion.h2>
+
+          {/* Description */}
+          <motion.p variants={fadeUp} style={{
+            textAlign: "center", fontSize: "1rem",
+            color: "rgba(255,255,255,0.7)", lineHeight: 1.7,
+            maxWidth: 620, margin: "0 auto 2.5rem",
+          }}>
+            Veltron Capital está habilitando su infraestructura de liquidez de forma escalonada.
+            Para garantizar la seguridad AES-256 y desembolsos en tiempo récord,
+            el acceso inicial será exclusivo para <strong style={{ color: "white" }}>usuarios seleccionados</strong>.
+          </motion.p>
+
+          {/* Benefits Grid */}
+          <motion.div variants={fadeUp} style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1.5rem", marginBottom: "2.5rem" }}>
+            {[
+              {
+                icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" strokeWidth="1.8"><line x1="19" y1="5" x2="5" y2="19" /><circle cx="6.5" cy="6.5" r="2.5" /><circle cx="17.5" cy="17.5" r="2.5" /></svg>,
+                title: "Tarifa Preferencial",
+                desc: "10% de gestión (en lugar del 12% público) de por vida.",
+                highlight: "Ahorro del 2%",
+              },
+              {
+                icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" strokeWidth="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12" /></svg>,
+                title: "Prioridad de Dispersión",
+                desc: "Tus retiros siempre van primero en la fila de procesamiento.",
+                highlight: "Prioridad #1",
+              },
+              {
+                icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" strokeWidth="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>,
+                title: "Soporte VIP",
+                desc: "Canal directo con el equipo de auditoría y soporte dedicado.",
+                highlight: "24/7",
+              },
+            ].map(({ icon, title, desc, highlight }) => (
+              <div key={title} style={{
+                background: "rgba(255,255,255,0.06)",
+                backdropFilter: "blur(16px)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                borderRadius: 20, padding: "2rem 1.75rem",
+                transition: "all 0.3s",
+              }}
+                onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.1)"; e.currentTarget.style.transform = "translateY(-4px)"; }}
+                onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.06)"; e.currentTarget.style.transform = "translateY(0)"; }}
+              >
+                <div style={{ marginBottom: "1rem" }}>{icon}</div>
+                <h3 style={{ fontFamily: "Manrope, sans-serif", fontWeight: 700, fontSize: "1.05rem", color: "white", marginBottom: "0.5rem" }}>{title}</h3>
+                <p style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.6)", lineHeight: 1.5, marginBottom: "0.75rem" }}>{desc}</p>
+                <span style={{
+                  display: "inline-flex", alignItems: "center", gap: 4,
+                  padding: "3px 10px", background: "rgba(0,177,123,0.15)",
+                  borderRadius: 999, fontSize: "0.68rem", fontWeight: 700,
+                  color: "#00B17B", letterSpacing: "0.3px",
+                }}>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12" /></svg>
+                  {highlight}
+                </span>
+              </div>
+            ))}
+          </motion.div>
+
+          {/* Status bar */}
+          <motion.div variants={fadeUp} style={{
+            display: "flex", alignItems: "center", justifyContent: "center", gap: "2rem",
+            padding: "1rem 2rem",
+            background: "rgba(255,255,255,0.06)",
+            borderRadius: 14,
+            marginBottom: "2.5rem",
+            flexWrap: "wrap",
+          }}>
+            {[
+              { label: "Infraestructura", status: "Validada ✓", done: true },
+              { label: "Módulo de dispersión", status: "Activo ✓", done: true },
+              { label: "Apertura de cuentas", status: "En curso…", done: false },
+            ].map(({ label, status, done }) => (
+              <div key={label} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.5)" }}>{label}:</span>
+                <span style={{
+                  fontSize: "0.78rem", fontWeight: 700,
+                  color: done ? "#00B17B" : "#f59e0b",
+                }}>{status}</span>
+              </div>
+            ))}
+          </motion.div>
+
+          {/* CTA */}
+          <motion.div variants={fadeUp} style={{ textAlign: "center" }}>
+            <button
+              onClick={() => onOpenModal("register")}
+              style={{
+                display: "inline-flex", alignItems: "center", gap: "0.75rem",
+                padding: "1rem 2.5rem", borderRadius: 16,
+                background: "linear-gradient(135deg, #0EA5E9, #006591)",
+                color: "white", fontFamily: "Manrope, sans-serif", fontWeight: 800, fontSize: "1.1rem",
+                border: "none", cursor: "pointer",
+                boxShadow: "0 8px 32px rgba(14,165,233,0.4), 0 0 0 1px rgba(14,165,233,0.3)",
+                transition: "all 0.25s",
+                letterSpacing: "-0.3px",
+              }}
+              onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 16px 48px rgba(14,165,233,0.5), 0 0 0 1px rgba(14,165,233,0.4)"; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 8px 32px rgba(14,165,233,0.4), 0 0 0 1px rgba(14,165,233,0.3)"; }}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                <polyline points="9 12 11 14 15 10" />
+              </svg>
+              Aplicar para mi Acceso Fundador
+            </button>
+
+            <p style={{ marginTop: "1rem", fontSize: "0.78rem", color: "rgba(255,255,255,0.45)" }}>
+              Al unirte hoy, aseguras una tarifa preferencial de lanzamiento de por vida.
+            </p>
+          </motion.div>
+
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ══════════════════════════════════════════
    CTA
 ══════════════════════════════════════════ */
-function CtaSection() {
+function CtaSection({ onOpenModal }) {
   return (
     <section style={{ padding: "6rem 2.5rem", background: "linear-gradient(160deg, #eaedff 0%, #dae2fd 100%)" }}>
       <div style={{ maxWidth: 800, margin: "0 auto", textAlign: "center" }}>
@@ -358,10 +574,15 @@ function CtaSection() {
             ¿Listo para liberar tu capital?
           </motion.h2>
           <motion.p variants={fadeUp} style={{ fontSize: "1rem", color: "#3e4850", marginBottom: "2.5rem" }}>
-            Únete a miles de usuarios que confían en Veltron Capital para obtener capital inmediato.
+            Únete a los usuarios seleccionados que acceden a Veltron Capital con tarifa preferencial.
           </motion.p>
           <motion.div variants={fadeUp} style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
-            <Link to="/register" className="btn-primary btn-lg" style={{ textDecoration: "none" }}>Crear Cuenta Gratis</Link>
+            <button onClick={() => onOpenModal("register")} className="btn-primary btn-lg" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              </svg>
+              Aplicar para Acceso Fundador
+            </button>
             <Link to="/login" className="btn-outline btn-lg" style={{ textDecoration: "none" }}>Iniciar Sesión</Link>
           </motion.div>
         </motion.div>
@@ -390,7 +611,7 @@ function LandingFooter() {
             </Link>
           ))}
         </nav>
-        <p style={{ fontSize: "0.75rem" }}>© 2025 Veltron Capital · Canal de conversión de cupo a efectivo · Bogotá, Colombia</p>
+        <p style={{ fontSize: "0.75rem" }}>© 2026 Veltron Capital · Canal de conversión de cupo a efectivo · Bogotá, Colombia</p>
       </div>
     </footer>
   );
@@ -400,14 +621,28 @@ function LandingFooter() {
    PAGE
 ══════════════════════════════════════════ */
 export default function LandingPage() {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState("register");
+
+  const openModal = (mode) => {
+    setModalMode(mode);
+    setModalOpen(true);
+  };
+
   return (
     <div className="landing-page">
-      <Navbar />
-      <HeroSection />
+      <Navbar onOpenModal={openModal} />
+      <HeroSection onOpenModal={openModal} />
       <StepsSection />
       <SecuritySection />
-      <CtaSection />
+      <FounderSection onOpenModal={openModal} />
+      <CtaSection onOpenModal={openModal} />
       <LandingFooter />
+      <FounderModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        initialMode={modalMode}
+      />
     </div>
   );
 }
