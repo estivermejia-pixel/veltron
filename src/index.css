@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@theme {
+  --color-glass-bg: rgba(255, 255, 255, 0.15);
+  --color-glass-border: rgba(255, 255, 255, 0.2);
+  --color-glass-text: #ffffff;
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] p-6;
+  }
+}
+
+body {
+  @apply m-0 min-h-screen text-slate-800 bg-gradient-to-br from-slate-100 to-slate-200 antialiased;
+}
+
+/* Wompi widget hidden standard */
+#wompi-widget-container {
+  display: none;
+}
