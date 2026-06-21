@@ -1,23 +1,147 @@
 @import "tailwindcss";
 
 @theme {
-  --color-glass-bg: rgba(255, 255, 255, 0.15);
-  --color-glass-border: rgba(255, 255, 255, 0.2);
-  --color-glass-text: #ffffff;
-  --font-sans: 'Inter', system-ui, sans-serif;
+  --color-surface: #f9f9fc;
+  --color-surface-dim: #dadadc;
+  --color-surface-bright: #f9f9fc;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f3f3f6;
+  --color-surface-container: #eeeef0;
+  --color-surface-container-high: #e8e8ea;
+  --color-surface-container-highest: #e2e2e5;
+  --color-on-surface: #1a1c1e;
+  --color-on-surface-variant: #3f4753;
+  --color-inverse-surface: #2f3133;
+  --color-inverse-on-surface: #f0f0f3;
+  --color-outline: #707884;
+  --color-outline-variant: #bfc7d5;
+  --color-surface-tint: #0061a5;
+  --color-primary: #0061a5;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #0099ff;
+  --color-on-primary-container: #002f54;
+  --color-inverse-primary: #9fcaff;
+  --color-secondary: #006875;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #00e3fd;
+  --color-on-secondary-container: #00616d;
+  --color-tertiary: #954a00;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #e77600;
+  --color-on-tertiary-container: #4b2200;
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+  --color-primary-fixed: #d2e4ff;
+  --color-primary-fixed-dim: #9fcaff;
+  --color-on-primary-fixed: #001d36;
+  --color-on-primary-fixed-variant: #00497e;
+  --color-secondary-fixed: #9cf0ff;
+  --color-secondary-fixed-dim: #00daf3;
+  --color-on-secondary-fixed: #001f24;
+  --color-on-secondary-fixed-variant: #004f58;
+  --color-tertiary-fixed: #ffdcc6;
+  --color-tertiary-fixed-dim: #ffb785;
+  --color-on-tertiary-fixed: #301400;
+  --color-on-tertiary-fixed-variant: #713700;
+  --color-background: #f9f9fc;
+  --color-on-background: #1a1c1e;
+
+  --spacing-container-padding-mobile: 20px;
+  --spacing-container-padding-desktop: 40px;
+  --spacing-gutter: 24px;
+  --spacing-component-gap: 16px;
+  --spacing-unit: 8px;
+
+  --font-family-headline-lg: 'Montserrat', sans-serif;
+  --font-family-label-sm: 'Montserrat', sans-serif;
+  --font-family-headline-lg-mobile: 'Montserrat', sans-serif;
+  --font-family-body-lg: 'Montserrat', sans-serif;
+  --font-family-headline-md: 'Montserrat', sans-serif;
+  --font-family-label-md: 'Montserrat', sans-serif;
+  --font-family-display-lg: 'Montserrat', sans-serif;
+  --font-family-body-md: 'Montserrat', sans-serif;
+
+  /* Font properties based on roles */
+  --text-display-lg: 56px;
+  --text-display-lg--line-height: 1.1;
+  --text-display-lg--letter-spacing: -0.02em;
+
+  --text-headline-lg: 32px;
+  --text-headline-lg--line-height: 1.2;
+
+  --text-headline-lg-mobile: 24px;
+  --text-headline-lg-mobile--line-height: 1.2;
+
+  --text-headline-md: 24px;
+  --text-headline-md--line-height: 1.3;
+
+  --text-body-lg: 18px;
+  --text-body-lg--line-height: 1.6;
+
+  --text-body-md: 16px;
+  --text-body-md--line-height: 1.6;
+
+  --text-label-md: 14px;
+  --text-label-md--line-height: 1.4;
+  --text-label-md--letter-spacing: 0.05em;
+
+  --text-label-sm: 12px;
+  --text-label-sm--line-height: 1.4;
 }
 
 @layer utilities {
-  .glass-panel {
-    @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] p-6;
+  .glass-card {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 8px 32px 0 rgba(0, 153, 255, 0.05);
+  }
+
+  .primary-gradient-btn {
+    background: linear-gradient(to bottom, #00b4ff, #0099ff);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .primary-gradient-btn:active {
+    transform: scale(0.95);
+  }
+
+  .floating-orb {
+    position: absolute;
+    filter: blur(100px);
+    z-index: -1;
+    opacity: 0.4;
+  }
+
+  .active-nav-border {
+    border-bottom: 2px solid #0061a5;
+  }
+
+  .island-transition {
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
-body {
-  @apply m-0 min-h-screen text-slate-800 bg-gradient-to-br from-slate-100 to-slate-200 antialiased;
+@keyframes flow {
+  0% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-20px) scale(1.05); }
+  100% { transform: translateY(0) scale(1); }
 }
 
-/* Wompi widget hidden standard */
-#wompi-widget-container {
-  display: none;
+.animate-flow {
+  animation: flow 8s ease-in-out infinite;
+}
+
+body {
+  background-color: #f9f9fc;
+  font-family: 'Montserrat', sans-serif;
+  overflow-x: hidden;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
 }
