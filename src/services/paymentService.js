@@ -8,9 +8,10 @@ const BANCOLOMBIA_CONFIG = {
   apiBaseUrl: 'https://gw-sandbox-qa.apps.ambientesbc.com/public-partner/sb/v2/operations/cross-product/payments/button-payment-instruction/management',
   tokenUrl: 'https://gw-sandbox-qa.apps.ambientesbc.com/security/oauth-provider/oauth2/token',
   scope: 'ButtonPayment:write:app',
-  clientId: process.env.VITE_BANCOLOMBIA_CLIENT_ID || '',
-  clientSecret: process.env.VITE_BANCOLOMBIA_CLIENT_SECRET || '',
+  clientId: import.meta.env.VITE_BANCOLOMBIA_CLIENT_ID || '',
+  clientSecret: import.meta.env.VITE_BANCOLOMBIA_CLIENT_SECRET || '',
 };
+
 
 /**
  * Genera un UUID v4 para message-id
@@ -100,7 +101,8 @@ async function initBancolombiaPayment(amountCOP, reference, description) {
         payInformation: {
           relationshipId: `Re${generateUUID().replace(/-/g, '')}`,
           transferAmount: amountCOP.toString(),
-          commerceTransferButtonId: process.env.VITE_COMMERCE_BUTTON_ID || 'DEFAULT_BUTTON',
+          commerceTransferButtonId: import.meta.env.VITE_COMMERCE_BUTTON_ID || 'DEFAULT_BUTTON',
+
           transferReference: reference,
           transferDescription: description || 'Compra de Veltron Tokens',
           confirmationUrl: `${window.location.origin}/api/payment/callback`,
