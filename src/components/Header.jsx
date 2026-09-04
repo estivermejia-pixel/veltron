@@ -32,10 +32,10 @@ export default function Header() {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`text-sm font-bold transition-all pb-1 ${
+                className={`text-sm font-bold transition-all pb-1 border-b-2 ${
                   active
-                    ? 'text-[#1E3A8A] border-b-2 border-[#1E3A8A]'
-                    : 'text-[#2C2C2C] hover:text-[#1E3A8A]'
+                    ? 'text-[#1E3A8A] border-[#FFD53D]'
+                    : 'text-[#2C2C2C] border-transparent hover:text-[#1E3A8A] hover:border-[#FFD53D]'
                 }`}
               >
                 {link.label}
