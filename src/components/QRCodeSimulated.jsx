@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Copy, Check, QrCode as QrIcon } from 'lucide-react';
+import { Copy, Check, QrCode as QrIcon, Download } from 'lucide-react';
 import { BANCOLOMBIA_LLAVE } from '../services/api';
 
 export default function QRCodeSimulated({ llave = BANCOLOMBIA_LLAVE }) {
   const [copied, setCopied] = useState(false);
+  const [downloading, setDownloading] = useState(false);
 
   const handleCopy = async () => {
     try {
@@ -15,8 +16,43 @@ export default function QRCodeSimulated({ llave = BANCOLOMBIA_LLAVE }) {
     }
   };
 
+  const handleDownloadQR = async () => {
+    setDownloading(true);
+    try {
+      // Cargar la imagen original (PNG) y convertirla a JPG via canvas
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.src = '/qr_code_only.png';
+
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+      });
+
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext('2d');
+
+      // Fondo blanco (JPG no soporta transparencia)
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+
+      // Descargar como JPG
+      const link = document.createElement('a');
+      link.download = 'QR_VeltronCapital.jpg';
+      link.href = canvas.toDataURL('image/jpeg', 0.95);
+      link.click();
+    } catch (e) {
+      console.error('Error al descargar el QR:', e);
+    } finally {
+      setDownloading(false);
+    }
+  };
+
   return (
-    <div className="flex flex-col justify-between items-start w-full max-w-[358px] mr-auto h-full space-y-6">
+    <div className="flex flex-col justify-between items-start w-full max-w-[358px] mr-auto h-full space-y-3">
 
       {/* Imagen del Código QR Directa */}
       <div className="relative w-full aspect-square flex items-center justify-center">
@@ -35,7 +71,7 @@ export default function QRCodeSimulated({ llave = BANCOLOMBIA_LLAVE }) {
         </div>
       </div>
 
-      {/* Botón Oscuro: Copiar Llave: @veltroncapital */}
+      {/* Botón Oscuro: Copiar Llave */}
       <button
         onClick={handleCopy}
         type="button"
@@ -55,6 +91,17 @@ export default function QRCodeSimulated({ llave = BANCOLOMBIA_LLAVE }) {
             Copiar Llave: {llave}
           </>
         )}
+      </button>
+
+      {/* Botón Descargar QR en JPG */}
+      <button
+        onClick={handleDownloadQR}
+        type="button"
+        disabled={downloading}
+        className="w-full py-3 px-4 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 transition-all active:scale-95 min-h-[40px] border-2 border-[#262626] text-[#262626] hover:bg-[#262626] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <Download className="w-4 h-4" />
+        {downloading ? 'Descargando...' : 'Descargar QR (.jpg)'}
       </button>
 
     </div>
