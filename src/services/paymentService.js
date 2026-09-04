@@ -222,3 +222,39 @@ export const paymentService = {
     }
   },
 };
+
+/**
+ * Crea un PaymentIntent invocando la Supabase Edge Function create-payment-intent
+ */
+export async function createStripePaymentIntent({ productId, amount, email, nombre, telefono }) {
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || supabaseUrl.includes('tu_supabase_url')) {
+    // Fallback local en ambiente de desarrollo sin Supabase configurado
+    const refNum = Math.floor(100000 + Math.random() * 900000);
+    return {
+      clientSecret: `pi_mock_${Date.now()}_secret_mock`,
+      paymentIntentId: `pi_mock_${Date.now()}`,
+      referencia_pago: `ST-${refNum}`,
+      isMock: true
+    };
+  }
+
+  const response = await fetch(`${supabaseUrl}/functions/v1/create-payment-intent`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${supabaseAnonKey}`,
+    },
+    body: JSON.stringify({ productId, amount, email, nombre, telefono })
+  });
+
+  if (!response.ok) {
+    const errData = await response.json().catch(() => ({}));
+    throw new Error(errData.error || 'Error al iniciar el pago con tarjeta en Stripe');
+  }
+
+  return response.json();
+}
+

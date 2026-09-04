@@ -3,6 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { getActiveProducts, createOrder, BANCOLOMBIA_LLAVE, generateShortRef } from '../services/api';
 import QRCodePaymentCard from '../features/catalog/components/QRCodePaymentCard';
 import CheckoutModal from '../features/checkout/components/CheckoutModal';
+import HowItWorks from '../features/landing/components/HowItWorks';
+import WhatYouGet from '../features/landing/components/WhatYouGet';
+import Testimonials from '../features/landing/components/Testimonials';
+import FAQ from '../features/landing/components/FAQ';
+import FinalCTA from '../features/landing/components/FinalCTA';
 import { Sparkles, Check, Clock } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 
@@ -252,6 +257,13 @@ export default function CatalogPage() {
         </motion.div>
 
       </section>
+
+      {/* SECCIONES COMPLEMENTARIAS DE LA LANDING */}
+      <HowItWorks />
+      <WhatYouGet />
+      <Testimonials />
+      <FAQ />
+      <FinalCTA onOpenCheckout={handleOpenCheckout} />
 
       {/* MODAL MODULAR DE REGISTRO DE COMPROBANTE */}
       <CheckoutModal

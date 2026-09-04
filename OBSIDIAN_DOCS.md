@@ -44,8 +44,14 @@ status: auditado
                                    │
      ┌─────────────────────────────┴─────────────────────────────┐
      ▼                                                           ▼
-[Panel Admin /admin]                                     [Usuario Consulta]
-- Verifica comprobante en banco                          - Espera verificación
+[LoginPage /admin/login]                                 [Usuario Consulta]
+- Autenticación con Supabase Auth / demo                 - Espera verificación
+- Valida tabla 'admins'                                         │
+- Redirige a /admin protegido                                   │
+     │                                                           │
+     ▼                                                           │
+[Panel Admin /admin (AuthGuard)]                                 │
+- Verifica comprobante en banco                                 │
 - Pulsa "Aprobar" (1 Clic)                                      │
 - Dispara RPC approve_order                                     │
 - Crea token en download_links (48h)                            │
@@ -68,46 +74,24 @@ status: auditado
 
 ### Componentes y Servicios en Producción
 - `[[src/pages/CatalogPage.jsx]]`: Punto de entrada con diseño Mobile-First. En móviles ubica la tarjeta de pago primero (`order-1`) y el código QR abajo (`order-2`). Cuenta con microinteracciones de Framer Motion y soporte `useReducedMotion`.
-- `[[src/components/QRCodeSimulated.jsx]]`: Renderiza la imagen oficial `/qr_code_only.png`, botón con feedback visual para copiar la llave y botón de render en Canvas para descargar el archivo `QR_VeltronCapital.jpg`.
+- `[[src/features/catalog/components/QRCodePaymentCard.jsx]]`: Renderiza la imagen oficial `/qr_code_only.png`, botón con feedback visual para copiar la llave y botón de render en Canvas para descargar el archivo `QR_VeltronCapital.jpg`.
+- `[[src/features/checkout/components/CheckoutModal.jsx]]`: Modal modular de recolección de datos y comprobante de pago.
 - `[[src/pages/StatusPage.jsx]]`: Permite el rastreo de órdenes por Nombre del Pagador, Correo o Referencia bancaria (`BC-XXXXXX`).
 - `[[src/pages/DownloadPage.jsx]]`: Punto de descarga protegido. Si el token expiró o ya fue consumido, bloquea el acceso.
 - `[[src/pages/RequestPage.jsx]]`: Votación y envío de solicitudes de nuevos libros o plantillas con ranking por votos.
+- `[[src/pages/LoginPage.jsx]]`: Acceso administrativo con diseño Glassmorphism oscuro.
+- `[[src/common/AuthGuard.jsx]]`: Guardián de ruta para `/admin`.
 - `[[src/pages/AdminPage.jsx]]`: Tabla de órdenes con previsualización del recibo bancario y botón de aprobación en 1 clic.
-- `[[src/services/api.js]]`: Orquestador de base de datos con detección dinámica de Supabase y conmutación transparente a `localStorage`.
+- `[[src/services/api.js]]`: Orquestador y fachada de servicios con detección dinámica de Supabase y conmutación transparente a `localStorage`.
 
 ---
 
-## ⚠️ 4. Cuadro de Diagnóstico y Estado Técnico
+## 🛡️ 4. Cuadro de Diagnóstico y Estado Técnico
 
 | Código / Módulo | Estado | Diagnóstico |
 | :--- | :--- | :--- |
 | **Flujo de Pago con Llave y QR** | `ACTUAL` | Operativo y probado en móvil y escritorio. |
 | **Descargas Seguras por Token (48h)** | `ACTUAL` | Respaldado por procedimiento Postgres `approve_order` y URLs firmadas de Supabase Storage. |
-| **Seguridad de la Ruta `/admin`** | `RIESGO` | No cuenta con middleware de protección de rutas en el frontend. La vista es accesible directamente en `/admin`. |
-| **`paymentService.js` (Bancolombia OAuth Sandbox / Wompi)** | `PROVISIONAL` | Código desconectado de pasarela API directa. No afecta la operación actual de la tienda pero consume peso. |
-| **Componentes `StakingPanel`, `PaymentPanel`, etc.** | `HUÉRFANO` | Restos de un prototipo de staking de criptoactivos no utilizados en el catálogo. |
-| **Subcarpeta `src/cielodigital`** | `HUÉRFANO` | Proyecto astronómico ("Cielo Digital") no conectado al sistema. |
-| **Notificación por Email al Aprobar** | `PENDIENTE` | La Edge Function `send-download-link` con Resend API requiere despliegue en la consola de Supabase. |
-
----
-
-## 🔐 5. Políticas de Acceso y RLS en Postgres
-
-```sql
--- Políticas implementadas en supabase/migrations/20260903_mvp_biblioteca.sql:
--- 1. Acceso público para lectura de productos activos:
-CREATE POLICY "Público puede ver productos activos"
-  ON public.products FOR SELECT USING (activo = true);
-
--- 2. Acceso público para registrar órdenes:
-CREATE POLICY "Público puede crear ordenes"
-  ON public.orders FOR INSERT WITH CHECK (true);
-
--- 3. Acceso público para consultar estado de órdenes:
-CREATE POLICY "Público puede consultar orden por email o referencia"
-  ON public.orders FOR SELECT USING (true);
-
--- 4. Modificación de órdenes restringida a administradores:
-CREATE POLICY "Admins pueden actualizar ordenes"
-  ON public.orders FOR UPDATE USING (public.is_admin());
-```
+| **Seguridad de la Ruta `/admin`** | `ACTUAL` | **Protegida con AuthGuard y LoginPage:** `/admin` es inaccesible sin sesión activa. Valida en tabla `admins` de Supabase o credenciales maestras en demo. |
+| **`paymentService.js` (Bancolombia OAuth Sandbox / Wompi)** | `PROVISIONAL` | Código desconectado de pasarela API directa. No afecta la operación actual de la tienda. |
+| **Notificación por Email al Aprobar** | `PENDIENTE` | La Edge Function `send-download-link` con Resend API requiere enlace con webhook o cron. |

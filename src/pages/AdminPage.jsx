@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getAdminOrders, updateOrderStatus, createProduct, getRequests, updateRequestStatus } from '../services/api';
+import ReceiptPreviewModal from '../common/ReceiptPreviewModal';
 import { ShieldCheck, CheckCircle2, XCircle, Clock, Plus, ExternalLink, RefreshCw, FileText } from 'lucide-react';
 
 export default function AdminPage() {
@@ -7,6 +8,7 @@ export default function AdminPage() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('ordenes');
+  const [selectedReceipt, setSelectedReceipt] = useState(null);
 
   // Formulario nuevo producto
   const [titulo, setTitulo] = useState('');
@@ -178,14 +180,17 @@ export default function AdminPage() {
                       </td>
                       <td className="py-4 px-2">
                         {ord.captura_url ? (
-                          <a
-                            href={ord.captura_url}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-flex items-center gap-1 text-[#1E3A8A] font-bold hover:underline"
+                          <button
+                            type="button"
+                            onClick={() => setSelectedReceipt({
+                              url: ord.captura_url,
+                              nombre_comprador: ord.nombre_comprador,
+                              referencia_pago: ord.referencia_pago
+                            })}
+                            className="inline-flex items-center gap-1 text-[#1E3A8A] font-bold hover:underline cursor-pointer"
                           >
                             <FileText className="w-3.5 h-3.5" /> Ver Recibo
-                          </a>
+                          </button>
                         ) : (
                           <span className="text-[10px] text-slate-400 italic">Sin captura</span>
                         )}
@@ -358,6 +363,12 @@ export default function AdminPage() {
           </div>
         </div>
       )}
+
+      {/* Modal de Previsualización de Comprobante */}
+      <ReceiptPreviewModal
+        receipt={selectedReceipt}
+        onClose={() => setSelectedReceipt(null)}
+      />
 
     </div>
   );

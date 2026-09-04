@@ -33,7 +33,8 @@ Estas rutas están definidas en el cliente mediante `react-router-dom`:
 - `/estado`: Rastreador de compras por referencia `BC-XXXXXX` o nombre.
 - `/descarga/:token`: Descarga segura mediante enlace efímero (48h).
 - `/solicitar`: Muro público de solicitudes comunitarias.
-- `/admin`: Panel de verificación manual en 1 clic.
+- `/admin/login`: Página de inicio de sesión administrativo con diseño glassmorphism.
+- `/admin`: Panel de verificación manual protegido por sesión (`AuthGuard`).
 
 ## 4. ⚠️ Puntos Críticos que NO Deben Modificarse sin Revisar
 1. **Comando de Build:** Mantener `npm run build` apuntando a `vite build`.

@@ -30,3 +30,9 @@ export {
   voteRequest,
   updateRequestStatus
 } from './requestsService';
+
+export {
+  paymentService,
+  createStripePaymentIntent
+} from './paymentService';
+

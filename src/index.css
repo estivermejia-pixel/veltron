@@ -7,6 +7,10 @@
   --color-navy: #1E3A8A;     /* azul marino corporativo */
   --color-purple: #1E3A8A;   /* alias azul marino corporativo */
   --color-white: #FFFFFF;    /* fondo base */
+  --color-ink: #111827;      /* fondo oscuro / texto principal denso */
+  --color-ink-foreground: #F9FAFB; /* texto sobre ink */
+  --color-muted-foreground: #6B7280; /* texto secundario / neutral */
+  --color-border: #E5E7EB;   /* borde sutil */
 }
 
 @theme {
@@ -16,6 +20,10 @@
   --color-navy: #1E3A8A;
   --color-purple: #1E3A8A;
   --color-white: #FFFFFF;
+  --color-ink: #111827;
+  --color-ink-foreground: #F9FAFB;
+  --color-muted-foreground: #6B7280;
+  --color-border: #E5E7EB;
 
   --font-family-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
