@@ -8,9 +8,10 @@ import WhatYouGet from '../features/landing/components/WhatYouGet';
 import Testimonials from '../features/landing/components/Testimonials';
 import FAQ from '../features/landing/components/FAQ';
 import FinalCTA from '../features/landing/components/FinalCTA';
-import { Sparkles, Check, Clock } from 'lucide-react';
+import { Sparkles, Check, Clock, Wallet, CreditCard, QrCode, Zap, ShieldCheck } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 import SEOHead from '../components/SEOHead';
+
 
 export default function CatalogPage() {
 
@@ -152,19 +153,56 @@ export default function CatalogPage() {
           {...fadeUp}
         >
 
-          {/* ENCABEZADO CON DEGRADADO AMARILLO → BLANCO */}
-          <div className="px-5 sm:px-7 pt-5 pb-6" style={{ background: 'linear-gradient(to right, #FEFCE8 0%, #FFFFFF 65%)' }}>
-            <div className="flex items-center gap-3 mb-3">
-              <span className="inline-flex items-center bg-[#111827] text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full">
-                BRE-B
+          {/* PESTAÑAS DE SELECCIÓN DE MÉTODO DE PAGO */}
+          <div className="bg-slate-50 border-b border-slate-100 p-2 grid grid-cols-3 gap-1.5">
+            <button
+              type="button"
+              onClick={() => setSelectedProductId(activeProduct?.id)}
+              className={`py-2 px-3 rounded-2xl text-xs font-extrabold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                true
+                  ? 'bg-white text-[#111827] shadow-xs border border-slate-200/60'
+                  : 'text-slate-500 hover:text-[#111827]'
+              }`}
+            >
+              <Wallet className="w-3.5 h-3.5 text-[#FF7A45]" />
+              <span className="hidden sm:inline">Wompi (Nequi/PSE)</span>
+              <span className="sm:hidden">Wompi</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleOpenCheckout()}
+              className="py-2 px-3 rounded-2xl text-xs font-extrabold text-slate-600 hover:text-[#111827] transition-all cursor-pointer flex items-center justify-center gap-1.5"
+            >
+              <QrCode className="w-3.5 h-3.5 text-emerald-600" />
+              <span className="hidden sm:inline">Llave Bre-B</span>
+              <span className="sm:hidden">Bre-B</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => navigate(`/comprar/${activeProduct?.id || '1'}`)}
+              className="py-2 px-3 rounded-2xl text-xs font-extrabold text-slate-600 hover:text-[#111827] transition-all cursor-pointer flex items-center justify-center gap-1.5"
+            >
+              <CreditCard className="w-3.5 h-3.5 text-indigo-600" />
+              <span className="hidden sm:inline">Stripe Tarjeta</span>
+              <span className="sm:hidden">Stripe</span>
+            </button>
+          </div>
+
+          {/* ENCABEZADO DE TARJETA */}
+          <div className="px-5 sm:px-7 pt-5 pb-4" style={{ background: 'linear-gradient(to right, #FFF5F0 0%, #FFFFFF 65%)' }}>
+            <div className="flex items-center gap-2 mb-2 flex-wrap">
+              <span className="inline-flex items-center bg-[#FF7A45] text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full flex items-center gap-1">
+                <Zap className="w-3 h-3 fill-white" /> WOMPI BANCOLOMBIA
               </span>
-              <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">
-                LLAVE BANCOLOMBIA NEGOCIOS
+              <span className="text-[10px] font-black text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200/60 uppercase tracking-widest">
+                APROBACIÓN AUTOMÁTICA
               </span>
             </div>
             <h2 className="text-[20px] sm:text-[24px] md:text-[26px] font-black text-[#111827] leading-[1.15] tracking-tight">
-              Escanea con tu banco.<br />
-              En segundos está pagado.
+              Paga con Nequi, PSE o Tarjetas.<br />
+              Acreditación automática al instante.
             </h2>
           </div>
 
@@ -198,12 +236,12 @@ export default function CatalogPage() {
                 animate="visible"
               >
                 <motion.div className="space-y-0.5" variants={colItem}>
-                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">TITULAR</span>
-                  <span className="text-[12px] font-bold text-[#111827]">Esdras Mejía Tovar</span>
+                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">ENTIDAD</span>
+                  <span className="text-[12px] font-bold text-[#111827]">Veltron Capital</span>
                 </motion.div>
                 <motion.div className="space-y-0.5" variants={colItem}>
-                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">LLAVE</span>
-                  <span className="text-[12px] font-bold text-[#111827]">{BANCOLOMBIA_LLAVE}</span>
+                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">LLAVE / MEDIO</span>
+                  <span className="text-[12px] font-bold text-[#111827]">Wompi / Bre-B</span>
                 </motion.div>
                 <motion.div className="space-y-0.5" variants={colItem}>
                   <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">COMISIÓN</span>
@@ -244,25 +282,30 @@ export default function CatalogPage() {
               )}
             </div>
 
-            {/* BOTÓN AMARILLO CTA Y RELOJ */}
+            {/* BOTÓN DE ACCIÓN Y SELECTOR DE MÉTODOS */}
             <div className="pt-1 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mt-auto">
               <motion.button
-                onClick={handleOpenCheckout}
+                onClick={() => navigate(`/comprar/${activeProduct?.id || '1'}`)}
                 whileHover={shouldReduceMotion ? {} : { scale: 1.02, y: -1 }}
                 whileTap={shouldReduceMotion ? {} : { scale: 0.97 }}
                 transition={{ duration: 0.15, ease: 'easeOut' }}
-                className="w-full sm:w-auto btn-cta py-3.5 px-8 rounded-full bg-[#FFD53D] hover:bg-[#FACC15] text-[#111827] font-black text-sm shadow-xs transition-colors text-center min-h-[48px] flex items-center justify-center cursor-pointer focus-visible:ring-2 focus-visible:ring-[#111827]"
+                className="w-full sm:w-auto btn-cta py-3.5 px-8 rounded-full bg-[#FF7A45] hover:bg-[#e86938] text-white font-black text-sm shadow-md transition-colors text-center min-h-[48px] flex items-center justify-center gap-2 cursor-pointer"
               >
-                Subir Comprobante
+                <Wallet className="w-4 h-4 text-white" />
+                Pagar con Wompi / PSE / Tarjeta
               </motion.button>
-              <span className="text-xs text-slate-500 font-semibold flex items-center justify-center sm:justify-start gap-1.5">
-                <Clock className="w-4 h-4 text-[#FF7A45]" />
-                Disponible hasta el domingo
-              </span>
+              <button
+                type="button"
+                onClick={handleOpenCheckout}
+                className="text-xs font-bold text-slate-600 hover:text-[#111827] underline cursor-pointer text-center sm:text-left shrink-0"
+              >
+                O subir recibo manual (Llave Bre-B)
+              </button>
             </div>
 
           </div>
         </motion.div>
+
 
       </section>
 

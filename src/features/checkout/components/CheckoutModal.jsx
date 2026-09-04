@@ -50,11 +50,12 @@ export default function CheckoutModal({
             <input
               type="text"
               required
-              placeholder="Ej. Esdras Mejia Tovar"
+              placeholder="Ej. Juan Pérez"
               value={nombrePagador}
               onChange={(e) => setNombrePagador(e.target.value)}
               className="w-full bg-slate-50 border border-slate-200 focus:border-[#1E3A8A] rounded-xl px-4 py-2.5 text-xs text-[#2C2C2C] focus:outline-none"
             />
+
           </div>
 
           <div>
