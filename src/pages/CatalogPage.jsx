@@ -108,80 +108,109 @@ export default function CatalogPage() {
           <QRCodeSimulated llave={BANCOLOMBIA_LLAVE} />
         </div>
 
-        {/* TARJETA 2 (DERECHA): INFORMACIÓN DE PAGO Y ÚNICO PRODUCTO DIGITAL SEMANAL */}
-        <div className="md:col-span-7 bg-white rounded-[32px] p-6 sm:p-7 shadow-xs border border-slate-100 space-y-4 flex flex-col justify-between">
-          
-          <div className="space-y-3.5">
-            <div>
-              <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider block">
-                LLAVE BANCOLOMBIA NEGOCIOS / BRE-B
-              </span>
-              <h2 className="text-xl sm:text-2xl font-extrabold text-[#111827] mt-1 leading-tight">
-                Escanea con tu banco. En segundos está pagado.
-              </h2>
-            </div>
+        {/* TARJETA DERECHA: RÉPLICA EXACTA DE LA REFERENCIA */}
+        <div className="md:col-span-7 bg-white rounded-[28px] shadow-sm border border-slate-100 overflow-hidden flex flex-col justify-between">
 
-            <div>
-              <div className="flex flex-wrap items-baseline gap-2">
-                <span className="text-2xl sm:text-3xl font-extrabold text-[#111827]">Monto Libre</span>
-                <span className="text-xs font-semibold text-slate-400">(Mínimo $1.000 COP)</span>
+          {/* ENCABEZADO CON DEGRADADO AMARILLO → BLANCO */}
+          <div className="px-6 sm:px-7 pt-5 pb-6" style={{ background: 'linear-gradient(to right, #FEFCE8 0%, #FFFFFF 65%)' }}>
+            {/* Fila BRE-B + LLAVE BANCOLOMBIA NEGOCIOS */}
+            <div className="flex items-center gap-3 mb-3">
+              <span className="inline-flex items-center bg-[#111827] text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full">
+                BRE-B
+              </span>
+              <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">
+                LLAVE BANCOLOMBIA NEGOCIOS
+              </span>
+            </div>
+            {/* Titular hero */}
+            <h2 className="text-[22px] sm:text-[26px] font-black text-[#111827] leading-[1.15] tracking-tight">
+              Escanea con tu banco.<br />
+              En segundos está pagado.
+            </h2>
+          </div>
+
+          {/* CUERPO */}
+          <div className="px-6 sm:px-7 pb-6 space-y-5 flex flex-col flex-1">
+
+            {/* TARJETA INTERNA: MONTO A PAGAR */}
+            <div className="bg-[#F8F9FA] border border-slate-200 rounded-2xl px-5 py-4 space-y-3">
+              {/* Label */}
+              <span className="text-[9px] font-black uppercase tracking-[0.18em] text-slate-400 block">
+                MONTO A PAGAR
+              </span>
+              {/* Monto Libre + Mínimo */}
+              <div className="flex items-baseline gap-3 flex-wrap">
+                <span className="text-[32px] sm:text-[36px] font-black text-[#111827] leading-none tracking-tight">
+                  Monto Libre
+                </span>
+                <span className="text-[11px] font-semibold text-slate-400 leading-none">
+                  Mínimo $1.000 COP
+                </span>
+              </div>
+              {/* Divisoria */}
+              <hr className="border-slate-200" />
+              {/* 3 columnas */}
+              <div className="grid grid-cols-3 gap-2">
+                <div className="space-y-0.5">
+                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">TITULAR</span>
+                  <span className="text-[12px] font-bold text-[#111827]">Esdras Mejía Tovar</span>
+                </div>
+                <div className="space-y-0.5">
+                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">LLAVE</span>
+                  <span className="text-[12px] font-bold text-[#111827]">{BANCOLOMBIA_LLAVE}</span>
+                </div>
+                <div className="space-y-0.5">
+                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">COMISIÓN</span>
+                  <span className="text-[12px] font-black text-emerald-600">$0 COP</span>
+                </div>
               </div>
             </div>
 
-            <div className="space-y-0.5 pt-1">
-              <p className="text-xs text-slate-500 font-medium">
-                Titular registrado: <strong className="text-[#111827] font-bold">Esdras Mejia Tovar</strong>
-              </p>
-              <p className="text-xs text-slate-500 font-medium">
-                ({BANCOLOMBIA_LLAVE} • Comisión $0 COP).
-              </p>
-            </div>
-
-            {/* TARJETA UNIFICADA PARA 1 SOLO PRODUCTO DIGITAL DE LA SEMANA */}
-            <div className="space-y-2 pt-2">
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">
-                PRODUCTO DIGITAL INCLUIDO CON TU PAGO:
+            {/* SECCIÓN PRODUCTO */}
+            <div className="space-y-2">
+              <span className="text-[9px] font-black uppercase tracking-[0.18em] text-slate-400 block">
+                PRODUCTO DIGITAL INCLUIDO CON TU PAGO
               </span>
 
               {loading ? (
-                <div className="h-16 bg-slate-100 rounded-2xl animate-pulse"></div>
+                <div className="h-16 bg-slate-100 rounded-2xl animate-pulse" />
               ) : (
-                <div className="p-4 rounded-2xl border border-[#DBEAFE] bg-[#F8FAFC] flex items-center justify-between gap-4">
+                <div className="bg-white border border-slate-200 rounded-2xl px-4 py-3.5 flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="p-3 rounded-xl bg-[#DBEAFE] text-[#1E40AF] shrink-0">
-                      <Sparkles className="w-5 h-5" />
+                    {/* Icono circular lavanda */}
+                    <div className="w-10 h-10 rounded-full bg-[#EEF2FF] flex items-center justify-center shrink-0">
+                      <Sparkles className="w-4.5 h-4.5 text-[#4F46E5]" style={{ width: '18px', height: '18px' }} />
                     </div>
                     <div className="min-w-0">
-                      <span className="text-[10px] font-black uppercase text-[#1E40AF] tracking-wider block">
+                      <span className="text-[9px] font-black uppercase tracking-widest text-[#4F46E5] block">
                         PRODUCTO DE LA SEMANA
                       </span>
-                      <h3 className="text-sm font-bold text-[#111827] truncate">
+                      <span className="text-[13px] font-semibold text-[#111827] block truncate">
                         {activeProduct?.titulo || 'Producto Digital de la Semana'}
-                      </h3>
+                      </span>
                     </div>
                   </div>
-                  <div className="w-6 h-6 rounded-full border-2 border-[#111827] flex items-center justify-center shrink-0">
-                    <Check className="w-3.5 h-3.5 text-[#111827] stroke-[3]" />
-                  </div>
+                  {/* Check verde */}
+                  <Check className="w-5 h-5 text-emerald-500 stroke-[2.5] shrink-0" />
                 </div>
               )}
             </div>
-          </div>
 
-          {/* BOTÓN AMARILLO CTA Y RELOJ */}
-          <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
-            <button
-              onClick={handleOpenCheckout}
-              className="w-full sm:w-auto btn-cta py-3.5 px-8 rounded-full bg-[#FFD53D] hover:bg-[#FACC15] text-[#111827] font-black text-sm shadow-xs transition-all text-center min-h-[48px] flex items-center justify-center cursor-pointer"
-            >
-              Subir Comprobante
-            </button>
-            <span className="text-xs text-slate-500 font-semibold flex items-center justify-center sm:justify-start gap-1.5">
-              <Clock className="w-4 h-4 text-[#FF7A45]" />
-              Disponible hasta el domingo
-            </span>
-          </div>
+            {/* BOTÓN AMARILLO CTA Y RELOJ */}
+            <div className="pt-1 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mt-auto">
+              <button
+                onClick={handleOpenCheckout}
+                className="w-full sm:w-auto btn-cta py-3.5 px-8 rounded-full bg-[#FFD53D] hover:bg-[#FACC15] text-[#111827] font-black text-sm shadow-xs transition-all text-center min-h-[48px] flex items-center justify-center cursor-pointer"
+              >
+                Subir Comprobante
+              </button>
+              <span className="text-xs text-slate-500 font-semibold flex items-center justify-center sm:justify-start gap-1.5">
+                <Clock className="w-4 h-4 text-[#FF7A45]" />
+                Disponible hasta el domingo
+              </span>
+            </div>
 
+          </div>
         </div>
 
       </section>
