@@ -9,23 +9,20 @@
           "value": "text/html; charset=utf-8"
         }
       ]
+    },
+    {
+      "source": "/sitemap.xml",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/xml; charset=utf-8"
+        }
+      ]
     }
   ],
   "rewrites": [
     {
-      "source": "/google60de2ff9f86d5727.html",
-      "destination": "/google60de2ff9f86d5727.html"
-    },
-    {
-      "source": "/sitemap.xml",
-      "destination": "/sitemap.xml"
-    },
-    {
-      "source": "/robots.txt",
-      "destination": "/robots.txt"
-    },
-    {
-      "source": "/((?!google60de2ff9f86d5727\\.html|sitemap\\.xml|robots\\.txt|favicon\\.svg|.*\\.png|.*\\.jpg|.*\\.js|.*\\.css|.*\\.json).*)",
+      "source": "/((?!.*\\.).*)",
       "destination": "/index.html"
     }
   ]
