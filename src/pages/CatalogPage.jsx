@@ -124,7 +124,7 @@ export default function CatalogPage() {
     <div className="w-full max-w-[1400px] mx-auto pl-4 sm:pl-6 md:pl-8 lg:pl-10 pr-4 sm:pr-6 md:pr-8 lg:pr-10 pt-2 sm:pt-4 pb-6 space-y-4 sm:space-y-5">
       <SEOHead
         title="Veltron Capital | Productos Digitales con Pago Libre"
-        description="Descarga productos digitales exclusivos con aporte libre verificados por Llave Bancolombia Negocios, Wompi y Stripe en Veltron Capital."
+        description="Descarga productos digitales exclusivos con aporte libre verificados por Llave Bancolombia Negocios y Wompi en Veltron Capital."
         path="/"
       />
       
@@ -154,41 +154,26 @@ export default function CatalogPage() {
         >
 
           {/* PESTAÑAS DE SELECCIÓN DE MÉTODO DE PAGO */}
-          <div className="bg-slate-50 border-b border-slate-100 p-2 grid grid-cols-3 gap-1.5">
+          <div className="bg-slate-50 border-b border-slate-100 p-2 grid grid-cols-2 gap-1.5">
             <button
               type="button"
-              onClick={() => setSelectedProductId(activeProduct?.id)}
-              className={`py-2 px-3 rounded-2xl text-xs font-extrabold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-                true
-                  ? 'bg-white text-[#111827] shadow-xs border border-slate-200/60'
-                  : 'text-slate-500 hover:text-[#111827]'
-              }`}
+              onClick={() => navigate(`/comprar/${activeProduct?.id || '1'}`)}
+              className="py-2.5 px-3 rounded-2xl text-xs font-extrabold bg-white text-[#111827] shadow-xs border border-slate-200/60 transition-all cursor-pointer flex items-center justify-center gap-1.5"
             >
-              <Wallet className="w-3.5 h-3.5 text-[#FF7A45]" />
-              <span className="hidden sm:inline">Wompi (Nequi/PSE)</span>
-              <span className="sm:hidden">Wompi</span>
+              <Wallet className="w-4 h-4 text-[#FF7A45]" />
+              <span>Wompi (Nequi / PSE / Tarjeta)</span>
             </button>
 
             <button
               type="button"
               onClick={() => handleOpenCheckout()}
-              className="py-2 px-3 rounded-2xl text-xs font-extrabold text-slate-600 hover:text-[#111827] transition-all cursor-pointer flex items-center justify-center gap-1.5"
+              className="py-2.5 px-3 rounded-2xl text-xs font-extrabold text-slate-600 hover:text-[#111827] transition-all cursor-pointer flex items-center justify-center gap-1.5"
             >
-              <QrCode className="w-3.5 h-3.5 text-emerald-600" />
-              <span className="hidden sm:inline">Llave Bre-B</span>
-              <span className="sm:hidden">Bre-B</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => navigate(`/comprar/${activeProduct?.id || '1'}`)}
-              className="py-2 px-3 rounded-2xl text-xs font-extrabold text-slate-600 hover:text-[#111827] transition-all cursor-pointer flex items-center justify-center gap-1.5"
-            >
-              <CreditCard className="w-3.5 h-3.5 text-indigo-600" />
-              <span className="hidden sm:inline">Stripe Tarjeta</span>
-              <span className="sm:hidden">Stripe</span>
+              <QrCode className="w-4 h-4 text-emerald-600" />
+              <span>Llave Bre-B (Manual)</span>
             </button>
           </div>
+
 
           {/* ENCABEZADO DE TARJETA */}
           <div className="px-5 sm:px-7 pt-5 pb-4" style={{ background: 'linear-gradient(to right, #FFF5F0 0%, #FFFFFF 65%)' }}>

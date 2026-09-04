@@ -33,8 +33,8 @@ export {
 
 export {
   paymentService,
-  createStripePaymentIntent,
   createWompiTransaction
 } from './paymentService';
+
 
 

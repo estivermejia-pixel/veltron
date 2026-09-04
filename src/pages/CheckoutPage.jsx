@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { getProductById, createOrder, createStripePaymentIntent, createWompiTransaction, BANCOLOMBIA_LLAVE } from '../services/api';
+import { getProductById, createOrder, createWompiTransaction, BANCOLOMBIA_LLAVE } from '../services/api';
 import CopyButton from '../components/CopyButton';
 import PaymentMethodSelector from '../features/checkout/components/PaymentMethodSelector';
-import StripeProvider from '../features/checkout/components/StripeProvider';
-import StripeCheckoutForm from '../features/checkout/components/StripeCheckoutForm';
 import WompiCheckoutWidget from '../features/checkout/components/WompiCheckoutWidget';
 import SEOHead from '../components/SEOHead';
-import { ArrowLeft, CheckCircle2, QrCode, Upload, AlertCircle, Loader2, CreditCard, Lock, Wallet, Zap } from 'lucide-react';
-
+import { ArrowLeft, CheckCircle2, QrCode, Upload, AlertCircle, Loader2, Wallet, Zap } from 'lucide-react';
 
 export default function CheckoutPage() {
   const { productId } = useParams();
@@ -17,7 +14,7 @@ export default function CheckoutPage() {
   const [product, setProduct] = useState(null);
   const [loadingProduct, setLoadingProduct] = useState(true);
 
-  // Método de Pago: 'wompi' | 'bre-b' | 'stripe'
+  // Método de Pago: 'wompi' | 'bre-b'
   const [paymentMethod, setPaymentMethod] = useState('wompi');
 
   // Form states comunes
@@ -34,11 +31,6 @@ export default function CheckoutPage() {
   // States específicos Wompi
   const [wompiConfig, setWompiConfig] = useState(null);
   const [creatingWompi, setCreatingWompi] = useState(false);
-
-  // States específicos Stripe
-  const [clientSecret, setClientSecret] = useState(null);
-  const [stripeRef, setStripeRef] = useState('');
-  const [creatingIntent, setCreatingIntent] = useState(false);
 
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -62,7 +54,6 @@ export default function CheckoutPage() {
     setPaymentMethod(method);
     setErrorMsg('');
     setWompiConfig(null);
-    setClientSecret(null);
   };
 
   // Preparar checkout con Wompi
@@ -91,36 +82,6 @@ export default function CheckoutPage() {
       setErrorMsg(err.message || 'No se pudo conectar con la pasarela Wompi.');
     } finally {
       setCreatingWompi(false);
-    }
-  };
-
-  // Preparar checkout con Stripe
-  const handleInitStripe = async (e) => {
-    e.preventDefault();
-    if (!email) {
-      setErrorMsg('Por favor ingresa tu correo electrónico para continuar.');
-      return;
-    }
-
-    setCreatingIntent(true);
-    setErrorMsg('');
-
-    try {
-      const res = await createStripePaymentIntent({
-        productId,
-        amount: Math.max(1000, Number(montoAporte)),
-        email,
-        nombre: nombre || 'Comprador',
-        telefono
-      });
-
-      setClientSecret(res.clientSecret);
-      setStripeRef(res.referencia_pago);
-    } catch (err) {
-      console.error('Error preparando Stripe:', err);
-      setErrorMsg(err.message || 'No se pudo conectar con la pasarela de Stripe.');
-    } finally {
-      setCreatingIntent(false);
     }
   };
 
@@ -188,12 +149,11 @@ export default function CheckoutPage() {
     <div className="max-w-4xl mx-auto px-4 py-10 sm:py-14">
       <SEOHead
         title={product ? `Checkout - ${product.titulo} | Veltron Capital` : 'Checkout Seguro | Veltron Capital'}
-        description={product ? `Completa tu orden para ${product.titulo} mediante Wompi, Llave Bancolombia o Tarjeta en Veltron Capital.` : 'Plataforma de pago y checkout seguro para productos digitales en Veltron Capital.'}
+        description={product ? `Completa tu orden para ${product.titulo} mediante Wompi o Llave Bancolombia en Veltron Capital.` : 'Plataforma de pago y checkout seguro para productos digitales en Veltron Capital.'}
         path={`/comprar/${productId || ''}`}
       />
 
       {/* Botón Volver */}
-
       <Link to="/" className="inline-flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-[#111827] mb-6 transition-colors">
         <ArrowLeft className="w-4 h-4" /> Volver al catálogo
       </Link>
@@ -240,7 +200,7 @@ export default function CheckoutPage() {
                 </div>
               </div>
             </div>
-          ) : paymentMethod === 'bre-b' ? (
+          ) : (
             <div className="bg-gradient-to-b from-white to-[#FFFDF5] rounded-3xl p-6 space-y-4 border border-[#FFD53D]/60 shadow-sm">
               <div className="flex items-center gap-2 text-[#111827] font-extrabold text-sm">
                 <QrCode className="w-5 h-5 text-[#FF7A45]" />
@@ -264,28 +224,6 @@ export default function CheckoutPage() {
               <p className="text-[11px] text-slate-500 text-center font-normal">
                 Comisión $0 COP • Verificación manual en 5 a 15 min.
               </p>
-            </div>
-          ) : (
-            <div className="bg-gradient-to-br from-slate-900 to-[#111827] text-white rounded-3xl p-6 space-y-4 border border-slate-800 shadow-md">
-              <div className="flex items-center gap-2 font-black text-sm text-white">
-                <CreditCard className="w-5 h-5 text-indigo-400" />
-                Pago con Tarjeta PCI Blindado
-              </div>
-
-              <p className="text-xs text-slate-300 leading-relaxed font-normal">
-                Al confirmar con tu tarjeta de crédito o débito, tu pago será acreditado de manera instantánea por Stripe.
-              </p>
-
-              <div className="pt-2 border-t border-slate-800 space-y-2 text-xs text-slate-400">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>Aprobación automática en tiempo real.</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Lock className="w-4 h-4 text-indigo-400 shrink-0" />
-                  <span>Token de descarga generado inmediatamente.</span>
-                </div>
-              </div>
             </div>
           )}
 
@@ -474,80 +412,6 @@ export default function CheckoutPage() {
                   )}
                 </button>
               </form>
-            )}
-
-            {/* SECCIÓN 3: PAGO CON TARJETA STRIPE */}
-            {paymentMethod === 'stripe' && (
-              <div className="space-y-5">
-                {!clientSecret ? (
-                  <form onSubmit={handleInitStripe} className="space-y-4">
-                    <div>
-                      <label className="block text-xs font-black text-[#111827] mb-1.5 uppercase">
-                        Correo Electrónico para Recibo y Enlace *
-                      </label>
-                      <input
-                        type="email"
-                        required
-                        placeholder="ejemplo@correo.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="w-full bg-white border border-slate-200 focus:border-[#111827] rounded-2xl px-4 py-3 text-sm text-[#111827] placeholder-slate-400 focus:outline-none transition-colors shadow-2xs"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-black text-[#111827] mb-1.5 uppercase">
-                        Nombre Completo (Opcional)
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="Tu nombre"
-                        value={nombre}
-                        onChange={(e) => setNombre(e.target.value)}
-                        className="w-full bg-white border border-slate-200 focus:border-[#111827] rounded-2xl px-4 py-3 text-sm text-[#111827] placeholder-slate-400 focus:outline-none transition-colors shadow-2xs"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-black text-[#111827] mb-1.5 uppercase">
-                        Monto del Aporte (COP) *
-                      </label>
-                      <input
-                        type="number"
-                        min={1000}
-                        step={500}
-                        required
-                        value={montoAporte}
-                        onChange={(e) => setMontoAporte(e.target.value)}
-                        className="w-full bg-white border border-slate-200 focus:border-[#111827] rounded-2xl px-4 py-3 text-sm text-[#111827] font-bold focus:outline-none transition-colors shadow-2xs"
-                      />
-                      <span className="text-[11px] text-slate-400 mt-1 block">Aporte voluntario a tu criterio (mínimo $1.000 COP).</span>
-                    </div>
-
-                    <button
-                      type="submit"
-                      disabled={creatingIntent}
-                      className="w-full py-4 rounded-2xl bg-[#111827] hover:bg-slate-800 text-white font-bold text-xs sm:text-sm shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
-                    >
-                      {creatingIntent ? (
-                        <>
-                          <Loader2 className="w-4 h-4 animate-spin text-white" />
-                          Iniciando Pasarela Segura...
-                        </>
-                      ) : (
-                        <>
-                          <CreditCard className="w-4 h-4 text-indigo-400" />
-                          Continuar a Datos de Tarjeta (Stripe)
-                        </>
-                      )}
-                    </button>
-                  </form>
-                ) : (
-                  <StripeProvider clientSecret={clientSecret}>
-                    <StripeCheckoutForm referenciaPago={stripeRef} />
-                  </StripeProvider>
-                )}
-              </div>
             )}
 
           </div>
