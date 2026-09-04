@@ -144,7 +144,7 @@ export default function CatalogPage() {
           className="order-2 md:order-1 md:col-span-5 flex flex-col justify-between items-center md:items-start"
           {...fadeLeft}
         >
-          <QRCodePaymentCard llave={BANCOLOMBIA_LLAVE} onOpenCheckout={handleOpenCheckout} />
+          <QRCodePaymentCard llave={BANCOLOMBIA_LLAVE} onPayWompi={() => navigate(`/comprar/${activeProduct?.id || '1'}`)} />
         </motion.div>
 
         {/* TARJETA DERECHA — order-1 en mobile (aparece primero), order-2 en desktop */}
@@ -237,17 +237,17 @@ export default function CatalogPage() {
               )}
             </div>
 
-            {/* BOTÓN DE ACCIÓN Y SELECTOR DE MÉTODOS */}
+            {/* BOTÓN DE ACCIÓN: SUBIR COMPROBANTE DE PAGO */}
             <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 mt-auto">
               <motion.button
-                onClick={() => navigate(`/comprar/${activeProduct?.id || '1'}`)}
+                onClick={handleOpenCheckout}
                 whileHover={shouldReduceMotion ? {} : { scale: 1.02, y: -1 }}
                 whileTap={shouldReduceMotion ? {} : { scale: 0.97 }}
                 transition={{ duration: 0.15, ease: 'easeOut' }}
-                className="w-full sm:w-auto btn-cta py-3.5 px-8 rounded-full bg-[#FF7A45] hover:bg-[#e86938] text-white font-black text-sm shadow-md transition-colors text-center min-h-[48px] flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full sm:w-auto btn-cta py-3.5 px-8 rounded-full bg-[#FFD53D] hover:bg-[#FACC15] text-[#111827] font-black text-sm shadow-xs transition-colors text-center min-h-[48px] flex items-center justify-center gap-2 cursor-pointer"
               >
-                <Wallet className="w-4 h-4 text-white" />
-                Pagar Online (Wompi / Nequi / PSE)
+                <Check className="w-4 h-4 text-[#111827]" />
+                Subir Comprobante (Llave Bre-B)
               </motion.button>
               <span className="text-xs text-slate-500 font-semibold flex items-center justify-center sm:justify-start gap-1.5 shrink-0">
                 <Clock className="w-4 h-4 text-[#FF7A45]" />
@@ -257,6 +257,7 @@ export default function CatalogPage() {
 
           </div>
         </motion.div>
+
 
 
 

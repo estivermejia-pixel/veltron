@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Copy, Check, Download, Upload } from 'lucide-react';
+import { Copy, Check, Download, Wallet } from 'lucide-react';
 import { BANCOLOMBIA_LLAVE } from '../../../config/env';
 import { motion, useReducedMotion } from 'framer-motion';
 
-export default function QRCodePaymentCard({ llave = BANCOLOMBIA_LLAVE, onOpenCheckout }) {
+export default function QRCodePaymentCard({ llave = BANCOLOMBIA_LLAVE, onPayWompi }) {
   const [copied, setCopied] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const shouldReduceMotion = useReducedMotion();
@@ -95,19 +95,19 @@ export default function QRCodePaymentCard({ llave = BANCOLOMBIA_LLAVE, onOpenChe
         </motion.button>
       </div>
 
-      {/* BOTÓN CTA SUBIR COMPROBANTE DEBAJO DE COPIAR LLAVE */}
-      {onOpenCheckout && (
+      {/* BOTÓN PAGAR WOMPI DEBAJO DE COPIAR LLAVE */}
+      {onPayWompi && (
         <div className="w-full">
           <motion.button
-            onClick={onOpenCheckout}
+            onClick={onPayWompi}
             type="button"
             whileHover={shouldReduceMotion ? {} : { scale: 1.01 }}
             whileTap={shouldReduceMotion ? {} : { scale: 0.96 }}
             transition={{ duration: 0.15 }}
-            className="w-full py-3.5 px-5 rounded-2xl bg-[#FFD53D] hover:bg-[#FACC15] text-[#111827] font-black text-xs sm:text-sm shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer min-h-[44px]"
+            className="w-full py-3.5 px-5 rounded-2xl bg-[#FF7A45] hover:bg-[#e86938] text-white font-black text-xs sm:text-sm shadow-md transition-colors flex items-center justify-center gap-2 cursor-pointer min-h-[44px]"
           >
-            <Upload className="w-4 h-4 text-[#111827]" />
-            Subir Comprobante (Llave Bre-B)
+            <Wallet className="w-4 h-4 text-white" />
+            Pagar Wompi (Nequi / PSE / Tarjeta)
           </motion.button>
         </div>
       )}
