@@ -1,0 +1,9 @@
+<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Arcos de color al pie de la V -->
+  <path d="M 14,78 A 42,42 0 0,0 58,94" stroke="#FFD53D" stroke-width="8" stroke-linecap="round" />
+  <path d="M 10,64 A 42,42 0 0,0 28,84" stroke="#FF7A45" stroke-width="8" stroke-linecap="round" />
+  <path d="M 32,88 A 42,42 0 0,0 46,94" stroke="#1E3A8A" stroke-width="8" stroke-linecap="round" />
+
+  <!-- Isotipo: Letra "V" en color Negro -->
+  <path d="M 26,16 L 48,64 L 70,16" stroke="#2C2C2C" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+</svg>
