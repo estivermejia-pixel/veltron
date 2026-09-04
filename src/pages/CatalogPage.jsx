@@ -144,7 +144,7 @@ export default function CatalogPage() {
           className="order-2 md:order-1 md:col-span-5 flex flex-col justify-between items-center md:items-start"
           {...fadeLeft}
         >
-          <QRCodePaymentCard llave={BANCOLOMBIA_LLAVE} />
+          <QRCodePaymentCard llave={BANCOLOMBIA_LLAVE} onOpenCheckout={handleOpenCheckout} />
         </motion.div>
 
         {/* TARJETA DERECHA — order-1 en mobile (aparece primero), order-2 en desktop */}
@@ -153,46 +153,16 @@ export default function CatalogPage() {
           {...fadeUp}
         >
 
-          {/* PESTAÑAS DE SELECCIÓN DE MÉTODO DE PAGO */}
-          <div className="bg-slate-50 border-b border-slate-100 p-2 grid grid-cols-2 gap-1.5">
-            <button
-              type="button"
-              onClick={() => navigate(`/comprar/${activeProduct?.id || '1'}`)}
-              className="py-2.5 px-3 rounded-2xl text-xs font-extrabold bg-white text-[#111827] shadow-xs border border-slate-200/60 transition-all cursor-pointer flex items-center justify-center gap-1.5"
-            >
-              <Wallet className="w-4 h-4 text-[#FF7A45]" />
-              <span>Wompi (Nequi / PSE / Tarjeta)</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleOpenCheckout()}
-              className="py-2.5 px-3 rounded-2xl text-xs font-extrabold text-slate-600 hover:text-[#111827] transition-all cursor-pointer flex items-center justify-center gap-1.5"
-            >
-              <QrCode className="w-4 h-4 text-emerald-600" />
-              <span>Llave Bre-B (Manual)</span>
-            </button>
-          </div>
-
-
-          {/* ENCABEZADO DE TARJETA */}
-          <div className="px-5 sm:px-7 pt-5 pb-4" style={{ background: 'linear-gradient(to right, #FFF5F0 0%, #FFFFFF 65%)' }}>
-            <div className="flex items-center gap-2 mb-2 flex-wrap">
-              <span className="inline-flex items-center bg-[#FF7A45] text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full flex items-center gap-1">
-                <Zap className="w-3 h-3 fill-white" /> WOMPI BANCOLOMBIA
-              </span>
-              <span className="text-[10px] font-black text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200/60 uppercase tracking-widest">
-                APROBACIÓN AUTOMÁTICA
-              </span>
-            </div>
+          {/* ENCABEZADO DE TARJETA CON DEGRADADO SUAVE */}
+          <div className="px-6 sm:px-8 pt-6 pb-4" style={{ background: 'linear-gradient(to right, #FEFCE8 0%, #FFFFFF 65%)' }}>
             <h2 className="text-[20px] sm:text-[24px] md:text-[26px] font-black text-[#111827] leading-[1.15] tracking-tight">
-              Paga con Nequi, PSE o Tarjetas.<br />
-              Acreditación automática al instante.
+              Escanea con tu banco o paga online.<br />
+              Acceso digital inmediato.
             </h2>
           </div>
 
           {/* CUERPO */}
-          <div className="px-5 sm:px-7 pb-6 space-y-5 flex flex-col flex-1">
+          <div className="px-6 sm:px-8 pb-6 space-y-5 flex flex-col flex-1">
 
             {/* TARJETA INTERNA: MONTO A PAGAR con hover lift */}
             <motion.div
@@ -226,7 +196,7 @@ export default function CatalogPage() {
                 </motion.div>
                 <motion.div className="space-y-0.5" variants={colItem}>
                   <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">LLAVE / MEDIO</span>
-                  <span className="text-[12px] font-bold text-[#111827]">Wompi / Bre-B</span>
+                  <span className="text-[12px] font-bold text-[#111827]">@veltroncapital</span>
                 </motion.div>
                 <motion.div className="space-y-0.5" variants={colItem}>
                   <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">COMISIÓN</span>
@@ -268,7 +238,7 @@ export default function CatalogPage() {
             </div>
 
             {/* BOTÓN DE ACCIÓN Y SELECTOR DE MÉTODOS */}
-            <div className="pt-1 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mt-auto">
+            <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 mt-auto">
               <motion.button
                 onClick={() => navigate(`/comprar/${activeProduct?.id || '1'}`)}
                 whileHover={shouldReduceMotion ? {} : { scale: 1.02, y: -1 }}
@@ -277,19 +247,17 @@ export default function CatalogPage() {
                 className="w-full sm:w-auto btn-cta py-3.5 px-8 rounded-full bg-[#FF7A45] hover:bg-[#e86938] text-white font-black text-sm shadow-md transition-colors text-center min-h-[48px] flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Wallet className="w-4 h-4 text-white" />
-                Pagar con Wompi / PSE / Tarjeta
+                Pagar Online (Wompi / Nequi / PSE)
               </motion.button>
-              <button
-                type="button"
-                onClick={handleOpenCheckout}
-                className="text-xs font-bold text-slate-600 hover:text-[#111827] underline cursor-pointer text-center sm:text-left shrink-0"
-              >
-                O subir recibo manual (Llave Bre-B)
-              </button>
+              <span className="text-xs text-slate-500 font-semibold flex items-center justify-center sm:justify-start gap-1.5 shrink-0">
+                <Clock className="w-4 h-4 text-[#FF7A45]" />
+                Disponible esta semana
+              </span>
             </div>
 
           </div>
         </motion.div>
+
 
 
       </section>
