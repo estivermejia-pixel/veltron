@@ -3,7 +3,7 @@
 :root {
   --color-carbon: #2C2C2C;   /* texto principal, isotipo, títulos */
   --color-yellow: #FFD53D;   /* acento principal, solo CTA */
-  --color-orange: #FF7A45;   /* acento secundario, solo íconos pequeños */
+  --color-orange: #F59E0B;   /* acento secundario ámbar corporativo */
   --color-navy: #1E3A8A;     /* azul marino corporativo */
   --color-purple: #1E3A8A;   /* alias azul marino corporativo */
   --color-white: #FFFFFF;    /* fondo base */
@@ -16,7 +16,7 @@
 @theme {
   --color-carbon: #2C2C2C;
   --color-yellow: #FFD53D;
-  --color-orange: #FF7A45;
+  --color-orange: #F59E0B;
   --color-navy: #1E3A8A;
   --color-purple: #1E3A8A;
   --color-white: #FFFFFF;

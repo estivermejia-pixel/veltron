@@ -20,6 +20,8 @@ export default function SEOHead({
       <title>{title}</title>
       <meta name="description" content={description} />
       <meta name="robots" content="index, follow" />
+      <meta name="google-site-verification" content="google60de2ff9f86d5727.html" />
+      <meta name="google-site-verification" content="60de2ff9f86d5727" />
       <link rel="canonical" href={canonicalUrl} />
 
       {/* OpenGraph (Facebook, WhatsApp, LinkedIn) */}

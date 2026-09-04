@@ -80,8 +80,8 @@ export default function WompiCheckoutWidget({ wompiConfig, onSuccess, onError })
 
   return (
     <div className="bg-slate-50 border border-slate-200/80 rounded-3xl p-6 text-center space-y-4">
-      <div className="flex items-center justify-center gap-2 text-xs font-black uppercase text-[#FF7A45] tracking-wider">
-        <ShieldCheck className="w-4 h-4" /> Pasarela Directa Wompi Bancolombia
+      <div className="flex items-center justify-center gap-2 text-xs font-black uppercase text-[#1E3A8A] tracking-wider">
+        <ShieldCheck className="w-4 h-4 text-[#1E3A8A]" /> Pasarela Directa Wompi Bancolombia
       </div>
 
       <div className="bg-white p-4 rounded-2xl border border-slate-200 space-y-2 text-left shadow-2xs">
@@ -111,23 +111,24 @@ export default function WompiCheckoutWidget({ wompiConfig, onSuccess, onError })
         type="button"
         onClick={handleOpenWompi}
         disabled={loadingScript || openingWidget || scriptError}
-        className="w-full py-4 px-6 rounded-2xl bg-[#FF7A45] hover:bg-[#e86938] text-white font-black text-sm active:scale-95 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+        className="w-full py-4 px-6 rounded-2xl bg-[#FFD53D] hover:bg-[#FACC15] text-[#111827] font-black text-sm active:scale-95 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
       >
         {loadingScript ? (
           <>
-            <Loader2 className="w-5 h-5 animate-spin text-white" />
+            <Loader2 className="w-5 h-5 animate-spin text-[#111827]" />
             Cargando Pasarela Segura...
           </>
         ) : openingWidget ? (
           <>
-            <Loader2 className="w-5 h-5 animate-spin text-white" />
+            <Loader2 className="w-5 h-5 animate-spin text-[#111827]" />
             Abriendo Widget de Pago...
           </>
         ) : (
           <>
-            <Lock className="w-4 h-4 text-white" />
-            Pagar con Wompi (Nequi / PSE / Tarjeta)
-            <ArrowRight className="w-4 h-4" />
+            <Lock className="w-4 h-4 text-[#111827]" />
+            <span>Pagar con</span>
+            <img src="/wompi-logo.png" alt="Wompi" className="h-5 object-contain shrink-0" />
+            <ArrowRight className="w-4 h-4 ml-auto" />
           </>
         )}
       </button>

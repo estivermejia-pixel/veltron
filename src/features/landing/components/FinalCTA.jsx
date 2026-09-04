@@ -1,19 +1,10 @@
 import React from 'react';
-import { Upload } from 'lucide-react';
+import { Wallet } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { scaleIn } from '../../../common/motion/variants';
 
-export default function FinalCTA({ onOpenCheckout }) {
+export default function FinalCTA({ onPayWompi }) {
   const shouldReduceMotion = useReducedMotion();
-
-  const handleScrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    if (typeof onOpenCheckout === 'function') {
-      setTimeout(() => {
-        onOpenCheckout();
-      }, 350);
-    }
-  };
 
   const containerVariants = shouldReduceMotion ? {} : scaleIn;
 
@@ -34,17 +25,17 @@ export default function FinalCTA({ onOpenCheckout }) {
 
           {/* Subtítulo */}
           <p className="text-xs sm:text-sm text-slate-300 font-normal leading-relaxed mb-8">
-            Escanea, paga lo que gustes y sube tu comprobante. Disponible hasta el domingo.
+            Paga online con Wompi o escanea el QR con tu app bancaria para acceso inmediato.
           </p>
 
-          {/* Botón Subir Comprobante */}
+          {/* Botón Pagar con Wompi */}
           <div>
             <button
-              onClick={handleScrollToTop}
-              className="py-3.5 px-7 rounded-full bg-[#FFD53D] hover:bg-[#FACC15] text-[#111827] font-bold text-xs sm:text-sm shadow-md transition-all cursor-pointer inline-flex items-center gap-2"
+              onClick={onPayWompi}
+              className="py-3.5 px-8 rounded-full bg-[#FFD53D] hover:bg-[#FACC15] text-[#111827] font-black text-xs sm:text-sm shadow-md transition-all cursor-pointer inline-flex items-center gap-2"
             >
-              <Upload className="w-4 h-4 text-[#111827] stroke-[2.5]" />
-              Subir Comprobante
+              <span>Pagar con</span>
+              <img src="/wompi-logo.png" alt="Wompi" className="h-4.5 object-contain shrink-0" />
             </button>
           </div>
         </div>
@@ -52,4 +43,5 @@ export default function FinalCTA({ onOpenCheckout }) {
     </section>
   );
 }
+
 

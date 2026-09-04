@@ -13,8 +13,8 @@ export const STEPS_DATA = [
   },
   {
     number: '03',
-    icon: 'Upload',
-    title: 'Sube el comprobante',
-    description: 'Adjunta la captura de tu transferencia y recibes el enlace de descarga.'
+    icon: 'ShieldCheck',
+    title: 'Acceso Inmediato',
+    description: 'Paga con Wompi para descarga inmediata o consulta tu transacción en Mi Orden.'
   }
 ];

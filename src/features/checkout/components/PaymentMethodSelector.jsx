@@ -9,22 +9,22 @@ export default function PaymentMethodSelector({ selectedMethod, onChange }) {
       </label>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {/* Opción 1: Wompi (Automático Nequi / PSE / Tarjeta) - RECOMENDADO */}
+        {/* Opción 1: Wompi - RECOMENDADO */}
         <button
           type="button"
           onClick={() => onChange('wompi')}
           className={`p-4 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between space-y-3 relative overflow-hidden ${
             selectedMethod === 'wompi'
-              ? 'bg-white border-[#FF7A45] shadow-sm ring-2 ring-[#FF7A45]/20'
+              ? 'bg-white border-[#FFD53D] shadow-sm ring-2 ring-[#FFD53D]/50'
               : 'bg-slate-50/70 border-slate-200/80 hover:bg-white text-slate-600'
           }`}
         >
           <div className="flex items-center justify-between">
-            <div className="w-9 h-9 rounded-xl bg-orange-50 text-[#FF7A45] flex items-center justify-center font-bold">
-              <Wallet className="w-5 h-5" />
+            <div className="h-7 flex items-center">
+              <img src="/wompi-logo.png" alt="Wompi" className="h-6 object-contain" />
             </div>
-            <span className="text-[9px] font-black uppercase tracking-wider text-[#FF7A45] bg-orange-50 px-2 py-0.5 rounded-full border border-orange-200/60 flex items-center gap-1">
-              <Zap className="w-3 h-3 fill-[#FF7A45]" /> Instantáneo
+            <span className="text-[9px] font-black uppercase tracking-wider text-[#111827] bg-[#FFD53D] px-2.5 py-0.5 rounded-full flex items-center gap-1">
+              <Zap className="w-3 h-3 fill-[#111827]" /> Instantáneo
             </span>
           </div>
 
@@ -49,8 +49,8 @@ export default function PaymentMethodSelector({ selectedMethod, onChange }) {
           }`}
         >
           <div className="flex items-center justify-between">
-            <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
-              <QrCode className="w-5 h-5" />
+            <div className="h-7 flex items-center">
+              <img src="/bre-b-logo-dark.png" alt="Bre-B" className="h-5 object-contain" />
             </div>
             <span className="text-[9px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60">
               Comisión $0

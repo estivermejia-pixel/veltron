@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { searchOrders } from '../services/api';
+import { searchOrders, createOrder, getActiveProducts, generateShortRef } from '../services/api';
 import StatusBadge from '../components/StatusBadge';
 import SEOHead from '../components/SEOHead';
-import { Search, Download, Clock, AlertCircle, CheckCircle2, ArrowRight, Loader2, ArrowLeft, ShieldCheck } from 'lucide-react';
+import { Search, Download, Clock, AlertCircle, CheckCircle2, ArrowRight, Loader2, ArrowLeft, Upload, FileText, Sparkles } from 'lucide-react';
 
 import { motion, useReducedMotion } from 'framer-motion';
 
@@ -16,6 +16,16 @@ export default function StatusPage() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
+
+  // Manual Receipt Upload state (Mi Orden)
+  const [showUploadForm, setShowUploadForm] = useState(false);
+  const [nombrePagador, setNombrePagador] = useState('');
+  const [email, setEmail] = useState('');
+  const [referencia, setReferencia] = useState('');
+  const [capturaFile, setCapturaFile] = useState(null);
+  const [capturaPreview, setCapturaPreview] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [uploadError, setUploadError] = useState('');
 
   const shouldReduceMotion = useReducedMotion();
 
@@ -41,16 +51,58 @@ export default function StatusPage() {
     }
   }, [initialRef]);
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setCapturaFile(file);
+      setCapturaPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleManualUploadSubmit = async (e) => {
+    e.preventDefault();
+    if (!nombrePagador || !email || !referencia) {
+      setUploadError('Por favor completa Nombre, Email y Referencia de Pago.');
+      return;
+    }
+
+    setSubmitting(true);
+    setUploadError('');
+
+    try {
+      const products = await getActiveProducts();
+      const activeProd = products[0];
+
+      await createOrder({
+        product_id: activeProd?.id || '1',
+        nombre_comprador: nombrePagador,
+        email_comprador: email,
+        referencia_pago: referencia,
+        capturaFile
+      });
+
+      setShowUploadForm(false);
+      setQuery(referencia);
+      const results = await searchOrders(referencia);
+      setOrders(results);
+      setSearched(true);
+    } catch (err) {
+      console.error(err);
+      setUploadError(err.message || 'Error registrando el comprobante.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-6">
       <SEOHead
-        title="Mi Orden | Consulta de Estado de Pedido | Veltron Capital"
-        description="Rastrea y consulta el estado de verificación de tu comprobante de pago para acceder a tu descarga digital en Veltron Capital."
+        title="Mi Orden | Consulta de Estado y Carga de Recibos | Veltron Capital"
+        description="Rastrea tu pedido o carga tu recibo manual de transferencia para acceder a tu descarga digital en Veltron Capital."
         path="/estado"
       />
 
       {/* Botón Volver */}
-
       <div>
         <Link
           to="/"
@@ -64,7 +116,7 @@ export default function StatusPage() {
       {/* Grid Principal en 2 Columnas para Escritorio */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        {/* COLUMNA IZQUIERDA: Banner y Buscador */}
+        {/* COLUMNA IZQUIERDA: Banner, Buscador y Carga Manual */}
         <div className="lg:col-span-5 space-y-6">
           
           {/* Banner de éxito post-checkout */}
@@ -132,6 +184,124 @@ export default function StatusPage() {
             </form>
           </div>
 
+          {/* SECCIÓN CARGA MANUAL DE RECIBO EN MI ORDEN */}
+          <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-100 shadow-sm space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-[10px] font-black uppercase tracking-widest text-[#1E3A8A] block mb-0.5">
+                  PAGO POR TRANSFERENCIA MANUAL
+                </span>
+                <h2 className="text-sm font-black text-[#111827]">
+                  ¿Pagaste con Llave Bancolombia?
+                </h2>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowUploadForm(!showUploadForm)}
+                className="px-3.5 py-2 rounded-full bg-[#FFD53D] hover:bg-[#FACC15] text-[#111827] text-xs font-bold transition-all cursor-pointer shadow-2xs"
+              >
+                {showUploadForm ? 'Cancelar' : 'Cargar Recibo Manual'}
+              </button>
+            </div>
+
+            {showUploadForm && (
+              <motion.form
+                initial={shouldReduceMotion ? {} : { opacity: 0, height: 0 }}
+                animate={shouldReduceMotion ? {} : { opacity: 1, height: 'auto' }}
+                onSubmit={handleManualUploadSubmit}
+                className="space-y-4 pt-3 border-t border-slate-100"
+              >
+                {uploadError && (
+                  <div className="bg-rose-50 border border-rose-200 text-rose-700 text-xs p-3 rounded-2xl font-semibold">
+                    {uploadError}
+                  </div>
+                )}
+
+                <div>
+                  <label className="block text-[11px] font-black text-[#111827] mb-1 uppercase">
+                    Nombre Completo del Pagador *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Ej. Juan Pérez"
+                    value={nombrePagador}
+                    onChange={(e) => setNombrePagador(e.target.value)}
+                    className="w-full bg-[#F8F9FA] border border-slate-200 focus:border-[#111827] rounded-xl px-3.5 py-2.5 text-xs text-[#111827] focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-black text-[#111827] mb-1 uppercase">
+                    Correo Electrónico *
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="ejemplo@correo.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full bg-[#F8F9FA] border border-slate-200 focus:border-[#111827] rounded-xl px-3.5 py-2.5 text-xs text-[#111827] focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-black text-[#111827] mb-1 uppercase">
+                    Número de Comprobante / Referencia *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Ej. BC-127098 o N° Aprobación"
+                    value={referencia}
+                    onChange={(e) => setReferencia(e.target.value)}
+                    className="w-full bg-[#F8F9FA] border border-slate-200 focus:border-[#111827] rounded-xl px-3.5 py-2.5 text-xs text-[#111827] font-mono focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-black text-[#111827] mb-1 uppercase">
+                    Foto del Comprobante (Opcional)
+                  </label>
+                  <div className="relative border-2 border-dashed border-slate-200 hover:border-[#111827] rounded-xl p-3 text-center cursor-pointer bg-slate-50">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    />
+                    {capturaPreview ? (
+                      <div className="flex items-center justify-center gap-2">
+                        <img src={capturaPreview} alt="Comprobante preview" className="w-12 h-12 object-cover rounded-lg border" />
+                        <span className="text-xs font-bold text-emerald-700">Imagen lista ✓</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center gap-2 text-slate-500">
+                        <Upload className="w-4 h-4 text-slate-700" />
+                        <span className="text-xs font-bold text-slate-600">Subir recibo (JPG, PNG)</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="w-full py-3 px-4 rounded-xl bg-[#111827] hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                >
+                  {submitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin text-white" />
+                      Registrando Recibo...
+                    </>
+                  ) : (
+                    'Enviar Recibo para Verificación'
+                  )}
+                </button>
+              </motion.form>
+            )}
+          </div>
+
         </div>
 
         {/* COLUMNA DERECHA: Resultados */}
@@ -162,7 +332,7 @@ export default function StatusPage() {
             </div>
           ) : orders.length === 0 ? (
             <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm text-center space-y-3">
-              <AlertCircle className="w-10 h-10 text-[#FF7A45] mx-auto" />
+              <AlertCircle className="w-10 h-10 text-amber-500 mx-auto" />
               <h3 className="text-sm font-bold text-[#111827]">
                 No se encontraron órdenes con esos datos
               </h3>
@@ -216,8 +386,8 @@ export default function StatusPage() {
                             <ArrowRight className="w-3.5 h-3.5" />
                           </Link>
                         ) : ord.estado === 'pendiente' ? (
-                          <div className="inline-flex items-center gap-1.5 text-[#FF7A45] bg-[#FF7A45]/10 px-3.5 py-2 rounded-full border border-[#FF7A45]/20 text-[11px] font-bold">
-                            <Clock className="w-3.5 h-3.5" />
+                          <div className="inline-flex items-center gap-1.5 text-amber-700 bg-amber-50 px-3.5 py-2 rounded-full border border-amber-200 text-[11px] font-bold">
+                            <Clock className="w-3.5 h-3.5 text-amber-600" />
                             En verificación por el administrador.
                           </div>
                         ) : (
@@ -239,4 +409,5 @@ export default function StatusPage() {
     </div>
   );
 }
+
 

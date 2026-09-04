@@ -22,7 +22,7 @@ export default function BrandLogo({ size = "md", showText = true }) {
           />
           <path
             d="M 10,64 A 42,42 0 0,0 28,84"
-            stroke="#FF7A45"
+            stroke="#F59E0B"
             strokeWidth="8"
             strokeLinecap="round"
           />

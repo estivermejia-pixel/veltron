@@ -5,7 +5,7 @@ import CopyButton from '../components/CopyButton';
 import PaymentMethodSelector from '../features/checkout/components/PaymentMethodSelector';
 import WompiCheckoutWidget from '../features/checkout/components/WompiCheckoutWidget';
 import SEOHead from '../components/SEOHead';
-import { ArrowLeft, CheckCircle2, QrCode, Upload, AlertCircle, Loader2, Wallet, Zap } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, QrCode, Upload, AlertCircle, Loader2, Wallet, Zap, ShieldCheck } from 'lucide-react';
 
 export default function CheckoutPage() {
   const { productId } = useParams();
@@ -135,7 +135,7 @@ export default function CheckoutPage() {
   if (!product) {
     return (
       <div className="max-w-md mx-auto px-4 py-16 text-center">
-        <AlertCircle className="w-12 h-12 text-[#FF7A45] mx-auto mb-3" />
+        <AlertCircle className="w-12 h-12 text-amber-500 mx-auto mb-3" />
         <h2 className="text-xl font-extrabold text-[#111827]">Producto no disponible</h2>
         <p className="text-slate-600 text-sm mt-2 font-medium">El producto seleccionado no existe o fue modificado.</p>
         <Link to="/" className="inline-block mt-6 px-5 py-2.5 bg-[#111827] text-white rounded-2xl text-xs font-bold">
@@ -146,92 +146,68 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-10 sm:py-14">
+    <div className="w-full max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4">
       <SEOHead
         title={product ? `Checkout - ${product.titulo} | Veltron Capital` : 'Checkout Seguro | Veltron Capital'}
         description={product ? `Completa tu orden para ${product.titulo} mediante Wompi o Llave Bancolombia en Veltron Capital.` : 'Plataforma de pago y checkout seguro para productos digitales en Veltron Capital.'}
         path={`/comprar/${productId || ''}`}
       />
 
-      {/* Botón Volver */}
-      <Link to="/" className="inline-flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-[#111827] mb-6 transition-colors">
-        <ArrowLeft className="w-4 h-4" /> Volver al catálogo
-      </Link>
+      {/* Bar de Encabezado Superior Compacto */}
+      <div className="flex items-center justify-between border-b border-slate-200/80 pb-3">
+        <Link to="/" className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-[#111827] transition-colors py-1 px-3 rounded-full hover:bg-slate-100">
+          <ArrowLeft className="w-3.5 h-3.5" /> Volver al catálogo
+        </Link>
+        <div className="flex items-center gap-2 text-xs font-black text-[#1E3A8A] bg-blue-50 px-3 py-1 rounded-full border border-blue-200/60">
+          <ShieldCheck className="w-3.5 h-3.5 text-[#1E3A8A]" />
+          <span>Checkout Seguro • Veltron Capital</span>
+        </div>
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+      {/* Rejilla Horizontal Ancha (4 Col Resumen | 8 Col Formulario) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
         
-        {/* Resumen e Instrucciones según Método */}
-        <div className="md:col-span-5 space-y-6">
-          
-          <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
-            <span className="text-[10px] uppercase font-black text-[#FF7A45] tracking-wider">Resumen de Compra</span>
-            <h1 className="text-xl font-black text-[#111827] mt-1 leading-snug">{product.titulo}</h1>
-            <p className="text-xs text-slate-500 mt-2 leading-relaxed font-normal">{product.descripcion}</p>
+        {/* COLUMNA IZQUIERDA: Resumen Compacto */}
+        <div className="lg:col-span-4 space-y-4">
+          <div className="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm space-y-4">
+            <div>
+              <span className="text-[9px] uppercase font-black text-[#1E3A8A] tracking-wider block mb-0.5">RESUMEN DE COMPRA</span>
+              <h1 className="text-lg font-black text-[#111827] leading-snug">{product.titulo}</h1>
+              <p className="text-xs text-slate-500 mt-1 leading-relaxed font-normal">{product.descripcion}</p>
+            </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-100 flex justify-between items-baseline">
+            <div className="pt-3 border-t border-slate-100 flex justify-between items-baseline">
               <span className="text-xs font-bold text-slate-700">Monto seleccionado:</span>
               <div className="text-right">
-                <span className="text-lg font-black text-[#111827] block">${Number(montoAporte).toLocaleString('es-CO')} COP</span>
+                <span className="text-xl font-black text-[#111827] block">${Number(montoAporte).toLocaleString('es-CO')} COP</span>
                 <span className="text-[10px] font-semibold text-slate-400 block">(Aporte libre • Mínimo $1.000 COP)</span>
               </div>
             </div>
-          </div>
 
-          {/* Instrucciones según Método */}
-          {paymentMethod === 'wompi' ? (
-            <div className="bg-gradient-to-br from-[#FFF5F0] to-[#FFFDF5] rounded-3xl p-6 space-y-4 border border-[#FF7A45]/30 shadow-sm">
-              <div className="flex items-center gap-2 text-[#111827] font-extrabold text-sm">
-                <Wallet className="w-5 h-5 text-[#FF7A45]" />
-                Pago Automático Wompi
-              </div>
-
-              <p className="text-xs text-slate-600 leading-relaxed font-normal">
-                Paga en segundos con <strong>Nequi, PSE o Tarjetas</strong>. Tu pago se valida automáticamente por la infraestructura de Bancolombia.
-              </p>
-
-              <div className="pt-2 border-t border-[#FF7A45]/20 space-y-2 text-xs text-slate-700 font-medium">
-                <div className="flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-[#FF7A45] shrink-0 fill-[#FF7A45]" />
-                  <span>Sin subir comprobantes de pago.</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>Enlace de descarga activo al instante.</span>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="bg-gradient-to-b from-white to-[#FFFDF5] rounded-3xl p-6 space-y-4 border border-[#FFD53D]/60 shadow-sm">
-              <div className="flex items-center gap-2 text-[#111827] font-extrabold text-sm">
-                <QrCode className="w-5 h-5 text-[#FF7A45]" />
-                Instrucciones de Pago (Llave)
-              </div>
-
-              <ol className="text-xs text-slate-700 space-y-2 list-decimal list-inside font-medium">
-                <li>Abre tu App Bancolombia, Nequi o banco integrado.</li>
-                <li>Elige <strong>Transferir con Llave</strong>.</li>
-                <li>Ingresa nuestra Llave Negocios:</li>
-              </ol>
-
-              <div className="bg-white p-4 rounded-2xl border border-slate-200 text-center space-y-3 shadow-2xs">
-                <div className="text-[10px] text-slate-400 uppercase font-black tracking-wider">Llave Bancolombia Negocios</div>
-                <div className="text-2xl font-black text-[#111827] tracking-wider font-mono">
-                  {BANCOLOMBIA_LLAVE}
-                </div>
+            {paymentMethod === 'bre-b' ? (
+              <div className="bg-[#FFFDF5] p-3.5 rounded-2xl border border-[#FFD53D]/60 space-y-2 text-center">
+                <div className="text-[9px] text-slate-500 uppercase font-black tracking-wider">Llave Bancolombia Negocios</div>
+                <div className="text-lg font-black text-[#111827] font-mono">{BANCOLOMBIA_LLAVE}</div>
                 <CopyButton text={BANCOLOMBIA_LLAVE} label="Copiar Llave Negocios" />
               </div>
-
-              <p className="text-[11px] text-slate-500 text-center font-normal">
-                Comisión $0 COP • Verificación manual en 5 a 15 min.
-              </p>
-            </div>
-          )}
-
+            ) : (
+              <div className="bg-slate-50 p-3 rounded-2xl space-y-1.5 text-xs text-slate-600 font-medium">
+                <div className="flex items-center gap-1.5 text-emerald-700 font-bold">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Acceso digital inmediato sin comprobantes.</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-slate-500 text-[11px]">
+                  <Zap className="w-3 h-3 text-amber-500 fill-amber-500" />
+                  <span>Pagos procesados por Wompi Bancolombia.</span>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Formulario de Checkout según Selección */}
-        <div className="md:col-span-7">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-sm">
+        {/* COLUMNA DERECHA: Selector y Formulario Horizontal */}
+        <div className="lg:col-span-8">
+          <div className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-100 shadow-sm space-y-4">
             
             {/* Selector de Método de Pago */}
             <PaymentMethodSelector
@@ -240,77 +216,83 @@ export default function CheckoutPage() {
             />
 
             {errorMsg && (
-              <div className="bg-rose-50 border border-rose-200 text-rose-700 text-xs p-3.5 rounded-2xl mb-4 font-semibold">
+              <div className="bg-rose-50 border border-rose-200 text-rose-700 text-xs p-3 rounded-2xl font-semibold">
                 {errorMsg}
               </div>
             )}
 
-            {/* SECCIÓN 1: WOMPI (AUTOMÁTICO NEQUI / PSE / TARJETA) */}
+            {/* SECCIÓN 1: WOMPI */}
             {paymentMethod === 'wompi' && (
-              <div className="space-y-5">
+              <div>
                 {!wompiConfig ? (
                   <form onSubmit={handleInitWompi} className="space-y-4">
-                    <div>
-                      <label className="block text-xs font-black text-[#111827] mb-1.5 uppercase">
-                        Correo Electrónico para Recibo y Enlace *
-                      </label>
-                      <input
-                        type="email"
-                        required
-                        placeholder="ejemplo@correo.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="w-full bg-white border border-slate-200 focus:border-[#111827] rounded-2xl px-4 py-3 text-sm text-[#111827] placeholder-slate-400 focus:outline-none transition-colors shadow-2xs"
-                      />
-                      <span className="text-[11px] text-slate-400 mt-1 block">A este correo te enviaremos el acceso inmediato.</span>
+                    {/* Campos de entrada dispuestos en horizontal para escritorio */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <div>
+                        <label className="block text-[10px] font-black text-[#111827] mb-1 uppercase">
+                          Correo Electrónico *
+                        </label>
+                        <input
+                          type="email"
+                          required
+                          placeholder="ejemplo@correo.com"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className="w-full bg-[#F8F9FA] border border-slate-200 focus:border-[#111827] focus:bg-white rounded-xl px-3.5 py-2.5 text-xs text-[#111827] focus:outline-none transition-colors"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[10px] font-black text-[#111827] mb-1 uppercase">
+                          Nombre Completo (Opcional)
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="Tu nombre"
+                          value={nombre}
+                          onChange={(e) => setNombre(e.target.value)}
+                          className="w-full bg-[#F8F9FA] border border-slate-200 focus:border-[#111827] focus:bg-white rounded-xl px-3.5 py-2.5 text-xs text-[#111827] focus:outline-none transition-colors"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[10px] font-black text-[#111827] mb-1 uppercase">
+                          Monto Aporte (COP) *
+                        </label>
+                        <input
+                          type="number"
+                          min={1000}
+                          step={500}
+                          required
+                          value={montoAporte}
+                          onChange={(e) => setMontoAporte(e.target.value)}
+                          className="w-full bg-[#F8F9FA] border border-slate-200 focus:border-[#111827] focus:bg-white rounded-xl px-3.5 py-2.5 text-xs text-[#111827] font-bold focus:outline-none transition-colors"
+                        />
+                      </div>
                     </div>
 
-                    <div>
-                      <label className="block text-xs font-black text-[#111827] mb-1.5 uppercase">
-                        Nombre Completo (Opcional)
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="Tu nombre"
-                        value={nombre}
-                        onChange={(e) => setNombre(e.target.value)}
-                        className="w-full bg-white border border-slate-200 focus:border-[#111827] rounded-2xl px-4 py-3 text-sm text-[#111827] placeholder-slate-400 focus:outline-none transition-colors shadow-2xs"
-                      />
+                    <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
+                      <button
+                        type="submit"
+                        disabled={creatingWompi}
+                        className="w-full sm:w-auto py-3.5 px-8 rounded-full bg-[#FFD53D] hover:bg-[#FACC15] text-[#111827] font-black text-xs sm:text-sm shadow-xs transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50 min-h-[46px]"
+                      >
+                        {creatingWompi ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin text-[#111827]" />
+                            Generando Firma de Seguridad Wompi...
+                          </>
+                        ) : (
+                          <>
+                            <span>Pagar con</span>
+                            <img src="/wompi-logo.png" alt="Wompi" className="h-5 object-contain shrink-0" />
+                          </>
+                        )}
+                      </button>
+                      <span className="text-[11px] text-slate-400 font-semibold text-center sm:text-right">
+                        Nequi • PSE • Tarjetas Débito y Crédito
+                      </span>
                     </div>
-
-                    <div>
-                      <label className="block text-xs font-black text-[#111827] mb-1.5 uppercase">
-                        Monto del Aporte (COP) *
-                      </label>
-                      <input
-                        type="number"
-                        min={1000}
-                        step={500}
-                        required
-                        value={montoAporte}
-                        onChange={(e) => setMontoAporte(e.target.value)}
-                        className="w-full bg-white border border-slate-200 focus:border-[#111827] rounded-2xl px-4 py-3 text-sm text-[#111827] font-bold focus:outline-none transition-colors shadow-2xs"
-                      />
-                      <span className="text-[11px] text-slate-400 mt-1 block">Aporte libre a tu criterio (mínimo $1.000 COP).</span>
-                    </div>
-
-                    <button
-                      type="submit"
-                      disabled={creatingWompi}
-                      className="w-full py-4 rounded-2xl bg-[#FF7A45] hover:bg-[#e86938] text-white font-black text-xs sm:text-sm shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
-                    >
-                      {creatingWompi ? (
-                        <>
-                          <Loader2 className="w-4 h-4 animate-spin text-white" />
-                          Generando Firma de Seguridad Wompi...
-                        </>
-                      ) : (
-                        <>
-                          <Wallet className="w-4 h-4 text-white" />
-                          Continuar a Pasarela Wompi (Nequi / PSE / Tarjeta)
-                        </>
-                      )}
-                    </button>
                   </form>
                 ) : (
                   <WompiCheckoutWidget
@@ -323,54 +305,55 @@ export default function CheckoutPage() {
 
             {/* SECCIÓN 2: PAGO BRE-B / LLAVE */}
             {paymentMethod === 'bre-b' && (
-              <form onSubmit={handleSubmitBreB} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-black text-[#111827] mb-1.5 uppercase">
-                    Correo Electrónico *
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    placeholder="ejemplo@correo.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-white border border-slate-200 focus:border-[#111827] rounded-2xl px-4 py-3 text-sm text-[#111827] placeholder-slate-400 focus:outline-none transition-colors shadow-2xs"
-                  />
-                  <span className="text-[11px] text-slate-400 mt-1 block">A este correo llegará tu enlace seguro.</span>
+              <form onSubmit={handleSubmitBreB} className="space-y-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-[10px] font-black text-[#111827] mb-1 uppercase">
+                      Correo Electrónico *
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      placeholder="ejemplo@correo.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full bg-[#F8F9FA] border border-slate-200 focus:border-[#111827] focus:bg-white rounded-xl px-3.5 py-2.5 text-xs text-[#111827] focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-black text-[#111827] mb-1 uppercase">
+                      Nombre Completo (Opcional)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Tu nombre"
+                      value={nombre}
+                      onChange={(e) => setNombre(e.target.value)}
+                      className="w-full bg-[#F8F9FA] border border-slate-200 focus:border-[#111827] focus:bg-white rounded-xl px-3.5 py-2.5 text-xs text-[#111827] focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-black text-[#111827] mb-1 uppercase">
+                      Número Referencia / Comprobante *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Ej. BC-99881122"
+                      value={referencia}
+                      onChange={(e) => setReferencia(e.target.value)}
+                      className="w-full bg-[#F8F9FA] border border-slate-200 focus:border-[#111827] focus:bg-white rounded-xl px-3.5 py-2.5 text-xs text-[#111827] font-mono focus:outline-none"
+                    />
+                  </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-black text-[#111827] mb-1.5 uppercase">
-                    Nombre Completo (Opcional)
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Tu nombre"
-                    value={nombre}
-                    onChange={(e) => setNombre(e.target.value)}
-                    className="w-full bg-white border border-slate-200 focus:border-[#111827] rounded-2xl px-4 py-3 text-sm text-[#111827] placeholder-slate-400 focus:outline-none transition-colors shadow-2xs"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-black text-[#111827] mb-1.5 uppercase">
-                    Número de Comprobante / Referencia *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Ej. BC-99881122 o N° de aprobación"
-                    value={referencia}
-                    onChange={(e) => setReferencia(e.target.value)}
-                    className="w-full bg-white border border-slate-200 focus:border-[#111827] rounded-2xl px-4 py-3 text-sm text-[#111827] placeholder-slate-400 focus:outline-none transition-colors font-mono shadow-2xs"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-black text-[#111827] mb-1.5 uppercase">
+                  <label className="block text-[10px] font-black text-[#111827] mb-1 uppercase">
                     Captura del Pago (Opcional)
                   </label>
-                  <div className="relative border-2 border-dashed border-[#FFD53D] hover:border-[#FF7A45] rounded-2xl p-4 text-center cursor-pointer transition-colors bg-slate-50/50">
+                  <div className="relative border border-dashed border-slate-300 hover:border-[#111827] rounded-xl p-2.5 text-center cursor-pointer transition-colors bg-slate-50">
                     <input
                       type="file"
                       accept="image/*"
@@ -378,16 +361,13 @@ export default function CheckoutPage() {
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                     />
                     {capturaPreview ? (
-                      <div className="flex items-center justify-center gap-3">
-                        <img src={capturaPreview} alt="Captura preview" className="w-16 h-16 object-cover rounded-xl border border-slate-200" />
-                        <div className="text-left text-xs">
-                          <p className="text-emerald-700 font-bold">Imagen cargada ✓</p>
-                          <p className="text-slate-500">Haz clic para cambiar</p>
-                        </div>
+                      <div className="flex items-center justify-center gap-2">
+                        <img src={capturaPreview} alt="Captura preview" className="w-10 h-10 object-cover rounded-lg border" />
+                        <span className="text-xs font-bold text-emerald-700">Imagen cargada ✓</span>
                       </div>
                     ) : (
-                      <div className="py-2 text-slate-500 flex flex-col items-center gap-1.5">
-                        <Upload className="w-6 h-6 text-[#FF7A45]" />
+                      <div className="flex items-center justify-center gap-2 text-slate-500">
+                        <Upload className="w-4 h-4 text-slate-700" />
                         <span className="text-xs font-bold text-slate-600">Subir foto del recibo (JPG, PNG)</span>
                       </div>
                     )}
@@ -397,16 +377,16 @@ export default function CheckoutPage() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full mt-6 py-4 rounded-2xl bg-[#FFD53D] hover:bg-[#FACC15] text-[#111827] font-black text-sm sm:text-base active:scale-95 transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+                  className="w-full py-3.5 px-6 rounded-full bg-[#FFD53D] hover:bg-[#FACC15] text-[#111827] font-black text-xs sm:text-sm active:scale-95 transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer"
                 >
                   {submitting ? (
                     <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
+                      <Loader2 className="w-4 h-4 animate-spin" />
                       Registrando orden...
                     </>
                   ) : (
                     <>
-                      <CheckCircle2 className="w-5 h-5 text-[#111827]" />
+                      <CheckCircle2 className="w-4 h-4 text-[#111827]" />
                       Confirmar Orden y Enviar Comprobante
                     </>
                   )}
@@ -421,3 +401,4 @@ export default function CheckoutPage() {
     </div>
   );
 }
+

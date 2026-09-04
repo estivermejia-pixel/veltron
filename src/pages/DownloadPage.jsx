@@ -122,7 +122,7 @@ export default function DownloadPage() {
           <div>
             <span className="block text-slate-400 font-bold text-[10px] uppercase">Vencimiento del Link:</span>
             <span className="text-[#2C2C2C] flex items-center gap-1 font-semibold">
-              <Clock className="w-3.5 h-3.5 text-[#FF7A45]" /> 48 horas
+              <Clock className="w-3.5 h-3.5 text-amber-500" /> 48 horas
             </span>
           </div>
         </div>
