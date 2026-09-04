@@ -74,20 +74,20 @@ export default function CatalogPage() {
         </h1>
       </div>
 
-      {/* BLOQUE PRINCIPAL — mobile: tarjeta primero, QR debajo / desktop: QR izq, tarjeta der */}
+      {/* BLOQUE PRINCIPAL — mobile: QR primero, tarjeta segunda / desktop: QR izq (col-5), tarjeta der (col-7) */}
       <section className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 items-start">
         
-        {/* QR — order-2 en mobile (aparece debajo), order-1 en desktop */}
+        {/* QR — order-1 en mobile, order-1 en desktop */}
         <motion.div
-          className="order-2 md:order-1 md:col-span-5 flex flex-col justify-between items-center md:items-start"
+          className="order-1 md:order-1 md:col-span-5 flex flex-col justify-between items-center md:items-start"
           {...fadeLeft}
         >
           <QRCodePaymentCard llave={BANCOLOMBIA_LLAVE} onPayWompi={handlePayWompi} />
         </motion.div>
 
-        {/* TARJETA DERECHA — order-1 en mobile (aparece primero), order-2 en desktop */}
+        {/* TARJETA DERECHA — order-2 en mobile, order-2 en desktop */}
         <motion.div
-          className="order-1 md:order-2 md:col-span-7 bg-white rounded-[28px] shadow-sm border border-slate-100 overflow-hidden flex flex-col"
+          className="order-2 md:order-2 md:col-span-7 bg-white rounded-[28px] shadow-sm border border-slate-100 overflow-hidden flex flex-col"
           {...fadeUp}
         >
 
