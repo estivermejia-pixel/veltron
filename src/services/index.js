@@ -36,5 +36,12 @@ export {
   createWompiTransaction
 } from './paymentService';
 
+export {
+  createContactMessage,
+  getContactMessages,
+  markMessageAsRead,
+  deleteContactMessage
+} from './contactMessagesService';
+
 
 

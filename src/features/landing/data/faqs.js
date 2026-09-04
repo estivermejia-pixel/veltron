@@ -5,7 +5,7 @@ export const FAQS_DATA = [
   },
   {
     question: '¿Puedo pagar cualquier monto?',
-    answer: 'Sí. El modelo es de aporte voluntario con un monto mínimo de $1.000 COP para cubrir los costos de servidor. Puedes transferir la cantidad que consideres justa según el valor recibido.'
+    answer: 'Sí. El modelo es de aporte voluntario. Puedes transferir la cantidad que consideres justa según el valor recibido.'
   },
   {
     question: '¿Qué pasa si no recibo el producto?',

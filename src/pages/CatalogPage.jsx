@@ -65,7 +65,7 @@ export default function CatalogPage() {
         description="Descarga productos digitales exclusivos con aporte libre verificados por Llave Bancolombia Negocios y Wompi en Veltron Capital."
         path="/"
       />
-      
+
       {/* Encabezado Principal */}
 
       <div className="text-center max-w-2xl mx-auto">
@@ -76,7 +76,7 @@ export default function CatalogPage() {
 
       {/* BLOQUE PRINCIPAL — mobile: QR primero, tarjeta segunda / desktop: QR izq (col-5), tarjeta der (col-7) */}
       <section className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 items-start">
-        
+
         {/* QR — order-1 en mobile, order-1 en desktop */}
         <motion.div
           className="order-1 md:order-1 md:col-span-5 flex flex-col justify-between items-center md:items-start"
@@ -117,7 +117,7 @@ export default function CatalogPage() {
                   Monto Libre
                 </span>
                 <span className="text-[11px] font-semibold text-slate-400 leading-none">
-                  Mínimo $1.000 COP
+                  Aporte Voluntario
                 </span>
               </div>
               <hr className="border-slate-200/80" />

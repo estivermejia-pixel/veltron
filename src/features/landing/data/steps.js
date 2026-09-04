@@ -9,7 +9,7 @@ export const STEPS_DATA = [
     number: '02',
     icon: 'Wallet',
     title: 'Paga lo que gustes',
-    description: 'Desde $1.000 COP. Tú decides el valor según lo que sientas que vale.'
+    description: 'Tú decides el valor de tu aporte según lo que sientas que vale.'
   },
   {
     number: '03',

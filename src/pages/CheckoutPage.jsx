@@ -64,13 +64,18 @@ export default function CheckoutPage() {
       return;
     }
 
+    if (Number(montoAporte) < 3000) {
+      setErrorMsg('El monto mínimo para transacciones con Wompi es de $3.000 COP.');
+      return;
+    }
+
     setCreatingWompi(true);
     setErrorMsg('');
 
     try {
       const res = await createWompiTransaction({
         productId,
-        amount: Math.max(1000, Number(montoAporte)),
+        amount: Math.max(3000, Number(montoAporte)),
         email,
         nombre: nombre || 'Comprador',
         telefono
@@ -180,7 +185,7 @@ export default function CheckoutPage() {
               <span className="text-xs font-bold text-slate-700">Monto seleccionado:</span>
               <div className="text-right">
                 <span className="text-xl font-black text-[#111827] block">${Number(montoAporte).toLocaleString('es-CO')} COP</span>
-                <span className="text-[10px] font-semibold text-slate-400 block">(Aporte libre • Mínimo $1.000 COP)</span>
+                <span className="text-[10px] font-semibold text-slate-400 block">(Aporte libre • Mínimo $3.000 COP)</span>
               </div>
             </div>
 
@@ -261,7 +266,7 @@ export default function CheckoutPage() {
                         </label>
                         <input
                           type="number"
-                          min={1000}
+                          min={3000}
                           step={500}
                           required
                           value={montoAporte}

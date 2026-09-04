@@ -237,7 +237,7 @@ export async function createWompiTransaction({ productId, amount, email, nombre,
   if (!supabaseUrl || supabaseUrl.includes('tu_supabase_url')) {
     // Fallback local para desarrollo sin backend Supabase activo
     const refNum = Math.floor(100000 + Math.random() * 900000);
-    const amountInCents = Math.max(1000, Number(amount)) * 100;
+    const amountInCents = Math.max(3000, Number(amount)) * 100;
     const referencia_pago = `WMP-${refNum}`;
     return {
       referencia_pago,

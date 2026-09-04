@@ -38,8 +38,8 @@ serve(async (req) => {
       );
     }
 
-    // Validar monto mínimo ($1.000 COP)
-    const numericAmount = Math.max(1000, Math.round(Number(amount)));
+    // Validar monto mínimo ($3.000 COP)
+    const numericAmount = Math.max(3000, Math.round(Number(amount)));
     const amountInCents = numericAmount * 100;
     const currency = 'COP';
 
