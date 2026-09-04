@@ -1,11 +1,7 @@
 {
   "rewrites": [
     {
-      "source": "/google60de2ff9f86d5727.html",
-      "destination": "/google60de2ff9f86d5727.html"
-    },
-    {
-      "source": "/((?!google60de2ff9f86d5727\\.html|favicon\\.svg|.*\\.png|.*\\.jpg|.*\\.js|.*\\.css|.*\\.json).*)",
+      "source": "/((?!.*\\.).*)",
       "destination": "/index.html"
     }
   ]
