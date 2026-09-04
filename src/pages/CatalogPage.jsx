@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { getActiveProducts, createOrder, BANCOLOMBIA_LLAVE, generateShortRef } from '../services/api';
 import QRCodeSimulated from '../components/QRCodeSimulated';
 import { Sparkles, Check, Upload, X, Loader2, Clock, CheckCircle2 } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
 
 export default function CatalogPage() {
   const navigate = useNavigate();
@@ -90,30 +91,55 @@ export default function CatalogPage() {
     }
   };
 
+  const shouldReduceMotion = useReducedMotion();
+
+  // Variantes de animación de entrada
+  const fadeUp = shouldReduceMotion
+    ? {}
+    : { initial: { opacity: 0, y: 16 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.35, ease: 'easeOut' } };
+
+  const fadeLeft = shouldReduceMotion
+    ? {}
+    : { initial: { opacity: 0, x: -12 }, animate: { opacity: 1, x: 0 }, transition: { duration: 0.35, ease: 'easeOut' } };
+
+  // Stagger para las 3 columnas
+  const colVariants = {
+    hidden: {},
+    visible: { transition: { staggerChildren: 0.08 } },
+  };
+  const colItem = shouldReduceMotion
+    ? { hidden: {}, visible: {} }
+    : { hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0, transition: { duration: 0.25, ease: 'easeOut' } } };
+
   return (
     <div className="w-full max-w-[1400px] mx-auto pl-4 sm:pl-6 md:pl-8 lg:pl-10 pr-4 sm:pr-6 md:pr-8 lg:pr-10 pt-2 sm:pt-4 pb-6 space-y-4 sm:space-y-5">
       
-      {/* Encabezado Principal Centrado Exacto */}
+      {/* Encabezado Principal */}
       <div className="text-center max-w-2xl mx-auto">
         <h1 className="text-2xl sm:text-3xl font-extrabold text-[#111827] tracking-tight">
           Paga lo que gustes. Descarga en minutos.
         </h1>
       </div>
 
-      {/* BLOQUE PRINCIPAL CON QR A LA IZQUIERDA Y DETALLES A LA DERECHA */}
-      <section className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 items-stretch">
+      {/* BLOQUE PRINCIPAL — mobile: tarjeta primero, QR debajo / desktop: QR izq, tarjeta der */}
+      <section className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 items-stretch">
         
-        {/* LADO IZQUIERDO: CÓDIGO QR ALINEADO AL BORDE IZQUIERDO */}
-        <div className="md:col-span-5 flex flex-col justify-between items-center md:items-start">
+        {/* QR — order-2 en mobile (aparece debajo), order-1 en desktop */}
+        <motion.div
+          className="order-2 md:order-1 md:col-span-5 flex flex-col justify-between items-center md:items-start"
+          {...fadeLeft}
+        >
           <QRCodeSimulated llave={BANCOLOMBIA_LLAVE} />
-        </div>
+        </motion.div>
 
-        {/* TARJETA DERECHA: RÉPLICA EXACTA DE LA REFERENCIA */}
-        <div className="md:col-span-7 bg-white rounded-[28px] shadow-sm border border-slate-100 overflow-hidden flex flex-col justify-between">
+        {/* TARJETA DERECHA — order-1 en mobile (aparece primero), order-2 en desktop */}
+        <motion.div
+          className="order-1 md:order-2 md:col-span-7 bg-white rounded-[28px] shadow-sm border border-slate-100 overflow-hidden flex flex-col justify-between"
+          {...fadeUp}
+        >
 
           {/* ENCABEZADO CON DEGRADADO AMARILLO → BLANCO */}
-          <div className="px-6 sm:px-7 pt-5 pb-6" style={{ background: 'linear-gradient(to right, #FEFCE8 0%, #FFFFFF 65%)' }}>
-            {/* Fila BRE-B + LLAVE BANCOLOMBIA NEGOCIOS */}
+          <div className="px-5 sm:px-7 pt-5 pb-6" style={{ background: 'linear-gradient(to right, #FEFCE8 0%, #FFFFFF 65%)' }}>
             <div className="flex items-center gap-3 mb-3">
               <span className="inline-flex items-center bg-[#111827] text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full">
                 BRE-B
@@ -122,51 +148,57 @@ export default function CatalogPage() {
                 LLAVE BANCOLOMBIA NEGOCIOS
               </span>
             </div>
-            {/* Titular hero */}
-            <h2 className="text-[22px] sm:text-[26px] font-black text-[#111827] leading-[1.15] tracking-tight">
+            <h2 className="text-[20px] sm:text-[24px] md:text-[26px] font-black text-[#111827] leading-[1.15] tracking-tight">
               Escanea con tu banco.<br />
               En segundos está pagado.
             </h2>
           </div>
 
           {/* CUERPO */}
-          <div className="px-6 sm:px-7 pb-6 space-y-5 flex flex-col flex-1">
+          <div className="px-5 sm:px-7 pb-6 space-y-5 flex flex-col flex-1">
 
-            {/* TARJETA INTERNA: MONTO A PAGAR */}
-            <div className="bg-[#F8F9FA] border border-slate-200 rounded-2xl px-5 py-4 space-y-3">
-              {/* Label */}
+            {/* TARJETA INTERNA: MONTO A PAGAR con hover lift */}
+            <motion.div
+              className="bg-[#F8F9FA] border border-slate-200 rounded-2xl px-5 py-4 space-y-3 cursor-default"
+              whileHover={shouldReduceMotion ? {} : { y: -2, boxShadow: '0 4px 16px rgba(0,0,0,0.06)' }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+            >
               <span className="text-[9px] font-black uppercase tracking-[0.18em] text-slate-400 block">
                 MONTO A PAGAR
               </span>
-              {/* Monto Libre + Mínimo */}
+              {/* Monto Libre — responsive: 24px mobile → 36px desktop */}
               <div className="flex items-baseline gap-3 flex-wrap">
-                <span className="text-[32px] sm:text-[36px] font-black text-[#111827] leading-none tracking-tight">
+                <span className="text-[24px] sm:text-[30px] md:text-[36px] font-black text-[#111827] leading-none tracking-tight">
                   Monto Libre
                 </span>
                 <span className="text-[11px] font-semibold text-slate-400 leading-none">
                   Mínimo $1.000 COP
                 </span>
               </div>
-              {/* Divisoria */}
               <hr className="border-slate-200" />
-              {/* 3 columnas */}
-              <div className="grid grid-cols-3 gap-2">
-                <div className="space-y-0.5">
+              {/* 3 columnas con stagger */}
+              <motion.div
+                className="grid grid-cols-3 gap-2"
+                variants={colVariants}
+                initial="hidden"
+                animate="visible"
+              >
+                <motion.div className="space-y-0.5" variants={colItem}>
                   <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">TITULAR</span>
                   <span className="text-[12px] font-bold text-[#111827]">Esdras Mejía Tovar</span>
-                </div>
-                <div className="space-y-0.5">
+                </motion.div>
+                <motion.div className="space-y-0.5" variants={colItem}>
                   <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">LLAVE</span>
                   <span className="text-[12px] font-bold text-[#111827]">{BANCOLOMBIA_LLAVE}</span>
-                </div>
-                <div className="space-y-0.5">
+                </motion.div>
+                <motion.div className="space-y-0.5" variants={colItem}>
                   <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">COMISIÓN</span>
                   <span className="text-[12px] font-black text-emerald-600">$0 COP</span>
-                </div>
-              </div>
-            </div>
+                </motion.div>
+              </motion.div>
+            </motion.div>
 
-            {/* SECCIÓN PRODUCTO */}
+            {/* SECCIÓN PRODUCTO con hover scale */}
             <div className="space-y-2">
               <span className="text-[9px] font-black uppercase tracking-[0.18em] text-slate-400 block">
                 PRODUCTO DIGITAL INCLUIDO CON TU PAGO
@@ -175,11 +207,14 @@ export default function CatalogPage() {
               {loading ? (
                 <div className="h-16 bg-slate-100 rounded-2xl animate-pulse" />
               ) : (
-                <div className="bg-white border border-slate-200 rounded-2xl px-4 py-3.5 flex items-center justify-between gap-3">
+                <motion.div
+                  className="bg-white border border-slate-200 rounded-2xl px-4 py-3.5 flex items-center justify-between gap-3 cursor-default"
+                  whileHover={shouldReduceMotion ? {} : { scale: 1.01, borderColor: '#c7d2fe' }}
+                  transition={{ duration: 0.18 }}
+                >
                   <div className="flex items-center gap-3 min-w-0">
-                    {/* Icono circular lavanda */}
                     <div className="w-10 h-10 rounded-full bg-[#EEF2FF] flex items-center justify-center shrink-0">
-                      <Sparkles className="w-4.5 h-4.5 text-[#4F46E5]" style={{ width: '18px', height: '18px' }} />
+                      <Sparkles style={{ width: '18px', height: '18px' }} className="text-[#4F46E5]" />
                     </div>
                     <div className="min-w-0">
                       <span className="text-[9px] font-black uppercase tracking-widest text-[#4F46E5] block">
@@ -190,20 +225,22 @@ export default function CatalogPage() {
                       </span>
                     </div>
                   </div>
-                  {/* Check verde */}
                   <Check className="w-5 h-5 text-emerald-500 stroke-[2.5] shrink-0" />
-                </div>
+                </motion.div>
               )}
             </div>
 
             {/* BOTÓN AMARILLO CTA Y RELOJ */}
             <div className="pt-1 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mt-auto">
-              <button
+              <motion.button
                 onClick={handleOpenCheckout}
-                className="w-full sm:w-auto btn-cta py-3.5 px-8 rounded-full bg-[#FFD53D] hover:bg-[#FACC15] text-[#111827] font-black text-sm shadow-xs transition-all text-center min-h-[48px] flex items-center justify-center cursor-pointer"
+                whileHover={shouldReduceMotion ? {} : { scale: 1.02, y: -1 }}
+                whileTap={shouldReduceMotion ? {} : { scale: 0.97 }}
+                transition={{ duration: 0.15, ease: 'easeOut' }}
+                className="w-full sm:w-auto btn-cta py-3.5 px-8 rounded-full bg-[#FFD53D] hover:bg-[#FACC15] text-[#111827] font-black text-sm shadow-xs transition-colors text-center min-h-[48px] flex items-center justify-center cursor-pointer focus-visible:ring-2 focus-visible:ring-[#111827]"
               >
                 Subir Comprobante
-              </button>
+              </motion.button>
               <span className="text-xs text-slate-500 font-semibold flex items-center justify-center sm:justify-start gap-1.5">
                 <Clock className="w-4 h-4 text-[#FF7A45]" />
                 Disponible hasta el domingo
@@ -211,7 +248,7 @@ export default function CatalogPage() {
             </div>
 
           </div>
-        </div>
+        </motion.div>
 
       </section>
 

@@ -79,3 +79,20 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
 }
+
+/* ── Accesibilidad: focus visible con anillo amarillo ── */
+:focus-visible {
+  outline: 2px solid #FFD53D;
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* ── Performance & Accesibilidad: respetar preferencia de movimiento reducido ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

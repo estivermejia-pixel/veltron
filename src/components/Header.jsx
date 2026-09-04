@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import BrandLogo from './BrandLogo';
 import { ShoppingBag, Search, ShieldCheck, Menu, X } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -15,8 +16,15 @@ export default function Header() {
 
   const isActive = (path) => location.pathname === path;
 
+  const shouldReduceMotion = useReducedMotion();
+
   return (
-    <nav className="sticky top-0 w-full z-50 glass-nav transition-all">
+    <motion.nav
+      className="sticky top-0 w-full z-50 glass-nav transition-all"
+      initial={shouldReduceMotion ? false : { y: -64, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.3, ease: 'easeOut' }}
+    >
       <div className="w-full flex justify-between items-center h-16 pl-4 sm:pl-6 md:pl-8 lg:pl-10 pr-2 sm:pr-4 md:pr-4 lg:pr-6">
         
         {/* Brand Logo */}
@@ -77,6 +85,6 @@ export default function Header() {
           })}
         </div>
       )}
-    </nav>
+    </motion.nav>
   );
 }
