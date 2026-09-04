@@ -258,3 +258,43 @@ export async function createStripePaymentIntent({ productId, amount, email, nomb
   return response.json();
 }
 
+/**
+ * Crea una transacción de Wompi invocando la Supabase Edge Function create-wompi-transaction
+ */
+export async function createWompiTransaction({ productId, amount, email, nombre, telefono }) {
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || supabaseUrl.includes('tu_supabase_url')) {
+    // Fallback local para desarrollo sin backend Supabase activo
+    const refNum = Math.floor(100000 + Math.random() * 900000);
+    const amountInCents = Math.max(1000, Number(amount)) * 100;
+    const referencia_pago = `WMP-${refNum}`;
+    return {
+      referencia_pago,
+      amountInCents,
+      currency: 'COP',
+      publicKey: import.meta.env.VITE_WOMPI_PUBLIC_KEY || 'pub_test_mockKey12345',
+      integritySignature: 'mock_integrity_signature_hash',
+      isMock: true
+    };
+  }
+
+  const response = await fetch(`${supabaseUrl}/functions/v1/create-wompi-transaction`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${supabaseAnonKey}`,
+    },
+    body: JSON.stringify({ productId, amount, email, nombre, telefono })
+  });
+
+  if (!response.ok) {
+    const errData = await response.json().catch(() => ({}));
+    throw new Error(errData.error || 'No se pudo iniciar el checkout seguro con Wompi.');
+  }
+
+  return response.json();
+}
+
+

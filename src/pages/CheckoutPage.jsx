@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { getProductById, createOrder, createStripePaymentIntent, BANCOLOMBIA_LLAVE } from '../services/api';
+import { getProductById, createOrder, createStripePaymentIntent, createWompiTransaction, BANCOLOMBIA_LLAVE } from '../services/api';
 import CopyButton from '../components/CopyButton';
 import PaymentMethodSelector from '../features/checkout/components/PaymentMethodSelector';
 import StripeProvider from '../features/checkout/components/StripeProvider';
 import StripeCheckoutForm from '../features/checkout/components/StripeCheckoutForm';
-import { ArrowLeft, CheckCircle2, QrCode, Upload, AlertCircle, Loader2, CreditCard, Lock } from 'lucide-react';
+import WompiCheckoutWidget from '../features/checkout/components/WompiCheckoutWidget';
+import { ArrowLeft, CheckCircle2, QrCode, Upload, AlertCircle, Loader2, CreditCard, Lock, Wallet, Zap } from 'lucide-react';
 
 export default function CheckoutPage() {
   const { productId } = useParams();
@@ -14,8 +15,8 @@ export default function CheckoutPage() {
   const [product, setProduct] = useState(null);
   const [loadingProduct, setLoadingProduct] = useState(true);
 
-  // Método de Pago: 'bre-b' | 'stripe'
-  const [paymentMethod, setPaymentMethod] = useState('bre-b');
+  // Método de Pago: 'wompi' | 'bre-b' | 'stripe'
+  const [paymentMethod, setPaymentMethod] = useState('wompi');
 
   // Form states comunes
   const [email, setEmail] = useState('');
@@ -27,6 +28,10 @@ export default function CheckoutPage() {
   const [referencia, setReferencia] = useState('');
   const [capturaFile, setCapturaFile] = useState(null);
   const [capturaPreview, setCapturaPreview] = useState(null);
+
+  // States específicos Wompi
+  const [wompiConfig, setWompiConfig] = useState(null);
+  const [creatingWompi, setCreatingWompi] = useState(false);
 
   // States específicos Stripe
   const [clientSecret, setClientSecret] = useState(null);
@@ -54,13 +59,44 @@ export default function CheckoutPage() {
   const handleMethodChange = (method) => {
     setPaymentMethod(method);
     setErrorMsg('');
+    setWompiConfig(null);
+    setClientSecret(null);
+  };
+
+  // Preparar checkout con Wompi
+  const handleInitWompi = async (e) => {
+    e.preventDefault();
+    if (!email) {
+      setErrorMsg('Por favor ingresa tu correo electrónico para continuar.');
+      return;
+    }
+
+    setCreatingWompi(true);
+    setErrorMsg('');
+
+    try {
+      const res = await createWompiTransaction({
+        productId,
+        amount: Math.max(1000, Number(montoAporte)),
+        email,
+        nombre: nombre || 'Comprador',
+        telefono
+      });
+
+      setWompiConfig(res);
+    } catch (err) {
+      console.error('Error preparando Wompi:', err);
+      setErrorMsg(err.message || 'No se pudo conectar con la pasarela Wompi.');
+    } finally {
+      setCreatingWompi(false);
+    }
   };
 
   // Preparar checkout con Stripe
   const handleInitStripe = async (e) => {
     e.preventDefault();
     if (!email) {
-      setErrorMsg('Por favor ingresa tu correo electrónico para continuar con la tarjeta.');
+      setErrorMsg('Por favor ingresa tu correo electrónico para continuar.');
       return;
     }
 
@@ -172,8 +208,30 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          {/* Instrucciones Bre-B o Info Stripe */}
-          {paymentMethod === 'bre-b' ? (
+          {/* Instrucciones según Método */}
+          {paymentMethod === 'wompi' ? (
+            <div className="bg-gradient-to-br from-[#FFF5F0] to-[#FFFDF5] rounded-3xl p-6 space-y-4 border border-[#FF7A45]/30 shadow-sm">
+              <div className="flex items-center gap-2 text-[#111827] font-extrabold text-sm">
+                <Wallet className="w-5 h-5 text-[#FF7A45]" />
+                Pago Automático Wompi
+              </div>
+
+              <p className="text-xs text-slate-600 leading-relaxed font-normal">
+                Paga en segundos con <strong>Nequi, PSE o Tarjetas</strong>. Tu pago se valida automáticamente por la infraestructura de Bancolombia.
+              </p>
+
+              <div className="pt-2 border-t border-[#FF7A45]/20 space-y-2 text-xs text-slate-700 font-medium">
+                <div className="flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-[#FF7A45] shrink-0 fill-[#FF7A45]" />
+                  <span>Sin subir comprobantes de pago.</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Enlace de descarga activo al instante.</span>
+                </div>
+              </div>
+            </div>
+          ) : paymentMethod === 'bre-b' ? (
             <div className="bg-gradient-to-b from-white to-[#FFFDF5] rounded-3xl p-6 space-y-4 border border-[#FFD53D]/60 shadow-sm">
               <div className="flex items-center gap-2 text-[#111827] font-extrabold text-sm">
                 <QrCode className="w-5 h-5 text-[#FF7A45]" />
@@ -195,7 +253,7 @@ export default function CheckoutPage() {
               </div>
 
               <p className="text-[11px] text-slate-500 text-center font-normal">
-                Comisión $0 COP • Verificación en 5 a 15 min.
+                Comisión $0 COP • Verificación manual en 5 a 15 min.
               </p>
             </div>
           ) : (
@@ -206,7 +264,7 @@ export default function CheckoutPage() {
               </div>
 
               <p className="text-xs text-slate-300 leading-relaxed font-normal">
-                Al confirmar con tu tarjeta de crédito o débito, tu pago será acreditado de manera instantánea por la red global de Stripe.
+                Al confirmar con tu tarjeta de crédito o débito, tu pago será acreditado de manera instantánea por Stripe.
               </p>
 
               <div className="pt-2 border-t border-slate-800 space-y-2 text-xs text-slate-400">
@@ -240,7 +298,83 @@ export default function CheckoutPage() {
               </div>
             )}
 
-            {/* SECCIÓN 1: PAGO BRE-B / LLAVE */}
+            {/* SECCIÓN 1: WOMPI (AUTOMÁTICO NEQUI / PSE / TARJETA) */}
+            {paymentMethod === 'wompi' && (
+              <div className="space-y-5">
+                {!wompiConfig ? (
+                  <form onSubmit={handleInitWompi} className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-black text-[#111827] mb-1.5 uppercase">
+                        Correo Electrónico para Recibo y Enlace *
+                      </label>
+                      <input
+                        type="email"
+                        required
+                        placeholder="ejemplo@correo.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="w-full bg-white border border-slate-200 focus:border-[#111827] rounded-2xl px-4 py-3 text-sm text-[#111827] placeholder-slate-400 focus:outline-none transition-colors shadow-2xs"
+                      />
+                      <span className="text-[11px] text-slate-400 mt-1 block">A este correo te enviaremos el acceso inmediato.</span>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-black text-[#111827] mb-1.5 uppercase">
+                        Nombre Completo (Opcional)
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Tu nombre"
+                        value={nombre}
+                        onChange={(e) => setNombre(e.target.value)}
+                        className="w-full bg-white border border-slate-200 focus:border-[#111827] rounded-2xl px-4 py-3 text-sm text-[#111827] placeholder-slate-400 focus:outline-none transition-colors shadow-2xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-black text-[#111827] mb-1.5 uppercase">
+                        Monto del Aporte (COP) *
+                      </label>
+                      <input
+                        type="number"
+                        min={1000}
+                        step={500}
+                        required
+                        value={montoAporte}
+                        onChange={(e) => setMontoAporte(e.target.value)}
+                        className="w-full bg-white border border-slate-200 focus:border-[#111827] rounded-2xl px-4 py-3 text-sm text-[#111827] font-bold focus:outline-none transition-colors shadow-2xs"
+                      />
+                      <span className="text-[11px] text-slate-400 mt-1 block">Aporte libre a tu criterio (mínimo $1.000 COP).</span>
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={creatingWompi}
+                      className="w-full py-4 rounded-2xl bg-[#FF7A45] hover:bg-[#e86938] text-white font-black text-xs sm:text-sm shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
+                    >
+                      {creatingWompi ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin text-white" />
+                          Generando Firma de Seguridad Wompi...
+                        </>
+                      ) : (
+                        <>
+                          <Wallet className="w-4 h-4 text-white" />
+                          Continuar a Pasarela Wompi (Nequi / PSE / Tarjeta)
+                        </>
+                      )}
+                    </button>
+                  </form>
+                ) : (
+                  <WompiCheckoutWidget
+                    wompiConfig={wompiConfig}
+                    onError={(err) => setErrorMsg(err)}
+                  />
+                )}
+              </div>
+            )}
+
+            {/* SECCIÓN 2: PAGO BRE-B / LLAVE */}
             {paymentMethod === 'bre-b' && (
               <form onSubmit={handleSubmitBreB} className="space-y-4">
                 <div>
@@ -333,7 +467,7 @@ export default function CheckoutPage() {
               </form>
             )}
 
-            {/* SECCIÓN 2: PAGO CON TARJETA (STRIPE) */}
+            {/* SECCIÓN 3: PAGO CON TARJETA STRIPE */}
             {paymentMethod === 'stripe' && (
               <div className="space-y-5">
                 {!clientSecret ? (
@@ -394,7 +528,7 @@ export default function CheckoutPage() {
                       ) : (
                         <>
                           <CreditCard className="w-4 h-4 text-indigo-400" />
-                          Continuar a Datos de Tarjeta
+                          Continuar a Datos de Tarjeta (Stripe)
                         </>
                       )}
                     </button>
@@ -414,4 +548,3 @@ export default function CheckoutPage() {
     </div>
   );
 }
-
