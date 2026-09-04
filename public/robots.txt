@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Deshabilitar rastreo de rutas privadas y administrativas
+Disallow: /admin
+Disallow: /admin/
+Disallow: /descarga/
+
+# Ubicación del Sitemap XML de Veltron Capital
+Sitemap: https://veltroncapital.com/sitemap.xml

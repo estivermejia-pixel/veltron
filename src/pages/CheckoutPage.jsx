@@ -6,7 +6,9 @@ import PaymentMethodSelector from '../features/checkout/components/PaymentMethod
 import StripeProvider from '../features/checkout/components/StripeProvider';
 import StripeCheckoutForm from '../features/checkout/components/StripeCheckoutForm';
 import WompiCheckoutWidget from '../features/checkout/components/WompiCheckoutWidget';
+import SEOHead from '../components/SEOHead';
 import { ArrowLeft, CheckCircle2, QrCode, Upload, AlertCircle, Loader2, CreditCard, Lock, Wallet, Zap } from 'lucide-react';
+
 
 export default function CheckoutPage() {
   const { productId } = useParams();
@@ -184,7 +186,14 @@ export default function CheckoutPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-10 sm:py-14">
+      <SEOHead
+        title={product ? `Checkout - ${product.titulo} | Veltron Capital` : 'Checkout Seguro | Veltron Capital'}
+        description={product ? `Completa tu orden para ${product.titulo} mediante Wompi, Llave Bancolombia o Tarjeta en Veltron Capital.` : 'Plataforma de pago y checkout seguro para productos digitales en Veltron Capital.'}
+        path={`/comprar/${productId || ''}`}
+      />
+
       {/* Botón Volver */}
+
       <Link to="/" className="inline-flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-[#111827] mb-6 transition-colors">
         <ArrowLeft className="w-4 h-4" /> Volver al catálogo
       </Link>

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { getRequests, createRequest, voteRequest } from '../services/api';
+import SEOHead from '../components/SEOHead';
 import { PlusCircle, BookOpen, FileSpreadsheet, CheckCircle2, MessageSquarePlus, ThumbsUp } from 'lucide-react';
+
 
 export default function RequestPage() {
   const [requests, setRequests] = useState([]);
@@ -57,8 +59,14 @@ export default function RequestPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-10 sm:py-14 space-y-10">
-      
+      <SEOHead
+        title="Solicitar Producto Digital | Votación Comunidad | Veltron Capital"
+        description="Solicita el libro en PDF o plantilla en Excel que necesitas. La comunidad vota las mejores solicitudes para su publicación en Veltron Capital."
+        path="/solicitar"
+      />
+
       {/* Title */}
+
       <div className="text-center max-w-xl mx-auto space-y-2">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1E3A8A]/10 border border-[#1E3A8A]/20 text-[#1E3A8A] text-xs font-extrabold uppercase tracking-wider mb-2">
           <MessageSquarePlus className="w-3.5 h-3.5" /> Solicitudes & Votación Pública

@@ -10,8 +10,10 @@ import FAQ from '../features/landing/components/FAQ';
 import FinalCTA from '../features/landing/components/FinalCTA';
 import { Sparkles, Check, Clock } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
+import SEOHead from '../components/SEOHead';
 
 export default function CatalogPage() {
+
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -119,8 +121,14 @@ export default function CatalogPage() {
 
   return (
     <div className="w-full max-w-[1400px] mx-auto pl-4 sm:pl-6 md:pl-8 lg:pl-10 pr-4 sm:pr-6 md:pr-8 lg:pr-10 pt-2 sm:pt-4 pb-6 space-y-4 sm:space-y-5">
+      <SEOHead
+        title="Veltron Capital | Productos Digitales con Pago Libre"
+        description="Descarga productos digitales exclusivos con aporte libre verificados por Llave Bancolombia Negocios, Wompi y Stripe en Veltron Capital."
+        path="/"
+      />
       
       {/* Encabezado Principal */}
+
       <div className="text-center max-w-2xl mx-auto">
         <h1 className="text-2xl sm:text-3xl font-extrabold text-[#111827] tracking-tight">
           Paga lo que gustes. Descarga en minutos.

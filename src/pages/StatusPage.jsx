@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { searchOrders } from '../services/api';
 import StatusBadge from '../components/StatusBadge';
+import SEOHead from '../components/SEOHead';
 import { Search, Download, Clock, AlertCircle, CheckCircle2, ArrowRight, Loader2, ArrowLeft, ShieldCheck } from 'lucide-react';
+
 import { motion, useReducedMotion } from 'framer-motion';
 
 export default function StatusPage() {
@@ -41,8 +43,14 @@ export default function StatusPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-6">
-      
+      <SEOHead
+        title="Mi Orden | Consulta de Estado de Pedido | Veltron Capital"
+        description="Rastrea y consulta el estado de verificación de tu comprobante de pago para acceder a tu descarga digital en Veltron Capital."
+        path="/estado"
+      />
+
       {/* Botón Volver */}
+
       <div>
         <Link
           to="/"

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { LEGAL_DATA } from '../features/landing/data/legalData';
+import SEOHead from '../components/SEOHead';
 import { ArrowLeft, Shield, FileText, RefreshCw, Mail } from 'lucide-react';
+
 import { motion, useReducedMotion } from 'framer-motion';
 
 export default function LegalPage() {
@@ -44,8 +46,14 @@ export default function LegalPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-8">
-      
+      <SEOHead
+        title={`${currentDoc.title} | Veltron Capital`}
+        description={currentDoc.description}
+        path={`/${activeTab}`}
+      />
+
       {/* Botón Volver */}
+
       <div>
         <Link
           to="/"

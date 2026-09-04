@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import AppLayout from './layouts/AppLayout';
 import AuthGuard from './common/AuthGuard';
 
@@ -15,30 +16,32 @@ import LegalPage from './pages/LegalPage';
 
 function App() {
   return (
-    <BrowserRouter>
-      <AppLayout>
-        <Routes>
-          <Route path="/" element={<CatalogPage />} />
-          <Route path="/comprar/:productId" element={<CheckoutPage />} />
-          <Route path="/estado" element={<StatusPage />} />
-          <Route path="/descarga/:token" element={<DownloadPage />} />
-          <Route path="/solicitar" element={<RequestPage />} />
-          <Route path="/terminos" element={<LegalPage />} />
-          <Route path="/privacidad" element={<LegalPage />} />
-          <Route path="/reembolso" element={<LegalPage />} />
-          <Route path="/legal/:section" element={<LegalPage />} />
-          <Route path="/admin/login" element={<LoginPage />} />
-          <Route
-            path="/admin"
-            element={
-              <AuthGuard>
-                <AdminPage />
-              </AuthGuard>
-            }
-          />
-        </Routes>
-      </AppLayout>
-    </BrowserRouter>
+    <HelmetProvider>
+      <BrowserRouter>
+        <AppLayout>
+          <Routes>
+            <Route path="/" element={<CatalogPage />} />
+            <Route path="/comprar/:productId" element={<CheckoutPage />} />
+            <Route path="/estado" element={<StatusPage />} />
+            <Route path="/descarga/:token" element={<DownloadPage />} />
+            <Route path="/solicitar" element={<RequestPage />} />
+            <Route path="/terminos" element={<LegalPage />} />
+            <Route path="/privacidad" element={<LegalPage />} />
+            <Route path="/reembolso" element={<LegalPage />} />
+            <Route path="/legal/:section" element={<LegalPage />} />
+            <Route path="/admin/login" element={<LoginPage />} />
+            <Route
+              path="/admin"
+              element={
+                <AuthGuard>
+                  <AdminPage />
+                </AuthGuard>
+              }
+            />
+          </Routes>
+        </AppLayout>
+      </BrowserRouter>
+    </HelmetProvider>
   );
 }
 
