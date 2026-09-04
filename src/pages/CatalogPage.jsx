@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getActiveProducts, createOrder, BANCOLOMBIA_LLAVE, generateShortRef } from '../services/api';
-import QRCodeSimulated from '../components/QRCodeSimulated';
-import { Sparkles, Check, Upload, X, Loader2, Clock, CheckCircle2 } from 'lucide-react';
+import QRCodePaymentCard from '../features/catalog/components/QRCodePaymentCard';
+import CheckoutModal from '../features/checkout/components/CheckoutModal';
+import { Sparkles, Check, Clock } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 
 export default function CatalogPage() {
@@ -129,7 +130,7 @@ export default function CatalogPage() {
           className="order-2 md:order-1 md:col-span-5 flex flex-col justify-between items-center md:items-start"
           {...fadeLeft}
         >
-          <QRCodeSimulated llave={BANCOLOMBIA_LLAVE} />
+          <QRCodePaymentCard llave={BANCOLOMBIA_LLAVE} />
         </motion.div>
 
         {/* TARJETA DERECHA — order-1 en mobile (aparece primero), order-2 en desktop */}
@@ -252,106 +253,23 @@ export default function CatalogPage() {
 
       </section>
 
-      {/* MODAL INLINE DE REGISTRO DE COMPROBANTE */}
-      {showCheckoutModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative space-y-5">
-            
-            <button
-              onClick={() => setShowCheckoutModal(false)}
-              className="absolute top-5 right-5 p-1.5 text-slate-400 hover:text-[#2C2C2C] rounded-full hover:bg-slate-100 transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <div>
-              <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#1E3A8A]">Subir Comprobante</span>
-              <h3 className="text-lg font-black text-[#2C2C2C]">Ingresa los datos de tu transferencia</h3>
-              <p className="text-xs text-slate-500 font-medium mt-1">
-                Referencia asignada: <strong className="text-[#1E3A8A] font-mono">{generatedRef}</strong>
-              </p>
-            </div>
-
-            {orderError && (
-              <div className="bg-rose-50 border border-rose-200 text-rose-600 text-xs p-3 rounded-xl font-medium">
-                {orderError}
-              </div>
-            )}
-
-            <form onSubmit={handleOrderSubmit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-[#2C2C2C] mb-1 uppercase">Nombre del Pagador *</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Ej. Esdras Mejia Tovar"
-                  value={nombrePagador}
-                  onChange={(e) => setNombrePagador(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 focus:border-[#1E3A8A] rounded-xl px-4 py-2.5 text-xs text-[#2C2C2C] focus:outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-[#2C2C2C] mb-1 uppercase">Correo Electrónico *</label>
-                <input
-                  type="email"
-                  required
-                  placeholder="ejemplo@correo.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 focus:border-[#1E3A8A] rounded-xl px-4 py-2.5 text-xs text-[#2C2C2C] focus:outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-[#2C2C2C] mb-1 uppercase">Teléfono / WhatsApp (Opcional)</label>
-                <input
-                  type="tel"
-                  placeholder="3001234567"
-                  value={telefono}
-                  onChange={(e) => setTelefono(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 focus:border-[#1E3A8A] rounded-xl px-4 py-2.5 text-xs text-[#2C2C2C] focus:outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-[#2C2C2C] mb-1 uppercase">Captura de Pantalla del Recibo (Opcional)</label>
-                <div className="relative border border-dashed border-slate-300 rounded-xl p-3 text-center cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                  />
-                  {capturaPreview ? (
-                    <span className="text-xs font-bold text-[#1E3A8A]">Imagen cargada ✓</span>
-                  ) : (
-                    <span className="text-xs text-slate-500 font-medium flex items-center justify-center gap-1.5">
-                      <Upload className="w-4 h-4 text-slate-400" /> Adjuntar captura del comprobante
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={submittingOrder}
-                className="w-full py-3.5 btn-cta rounded-xl text-[#2C2C2C] font-black text-xs shadow-xs active:scale-95 transition-all flex items-center justify-center gap-2"
-              >
-                {submittingOrder ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <>
-                    <CheckCircle2 className="w-4 h-4" />
-                    Subir Comprobante y Enviar
-                  </>
-                )}
-              </button>
-            </form>
-
-          </div>
-        </div>
-      )}
+      {/* MODAL MODULAR DE REGISTRO DE COMPROBANTE */}
+      <CheckoutModal
+        isOpen={showCheckoutModal}
+        onClose={() => setShowCheckoutModal(false)}
+        generatedRef={generatedRef}
+        nombrePagador={nombrePagador}
+        setNombrePagador={setNombrePagador}
+        email={email}
+        setEmail={setEmail}
+        telefono={telefono}
+        setTelefono={setTelefono}
+        capturaPreview={capturaPreview}
+        handleFileChange={handleFileChange}
+        submittingOrder={submittingOrder}
+        orderError={orderError}
+        onSubmit={handleOrderSubmit}
+      />
 
     </div>
   );
