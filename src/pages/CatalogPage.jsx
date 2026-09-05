@@ -134,27 +134,15 @@ export default function CatalogPage() {
                       </span>
                     </div>
 
-                    {/* Simulación Gráfica de Hoja Excel / Vista Previa */}
-                    <div className="bg-emerald-950/5 border border-emerald-500/20 rounded-xl p-3 flex flex-col space-y-2 font-mono text-[11px] overflow-hidden select-none">
-                      <div className="flex items-center justify-between border-b border-emerald-900/10 pb-1.5 text-[10px] text-emerald-800 font-bold">
-                        <span className="flex items-center gap-1.5">
-                          <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
-                          Logistics_Inventory_Dashboard.xlsx
-                        </span>
-                        <span className="text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded text-[9px] font-black uppercase">
-                          Excel Dashboard Pro
-                        </span>
-                      </div>
-                      <div className="grid grid-cols-4 gap-1 text-[10px] font-semibold text-slate-600 text-center">
-                        <div className="bg-emerald-100/60 p-1 rounded font-bold text-emerald-900">SKU</div>
-                        <div className="bg-emerald-100/60 p-1 rounded font-bold text-emerald-900">Stock</div>
-                        <div className="bg-emerald-100/60 p-1 rounded font-bold text-emerald-900">Estado</div>
-                        <div className="bg-emerald-100/60 p-1 rounded font-bold text-emerald-900">KPI</div>
-                        
-                        <div className="bg-white p-1 rounded border border-slate-100">LOG-849</div>
-                        <div className="bg-white p-1 rounded border border-slate-100">1,240 u</div>
-                        <div className="bg-emerald-50 text-emerald-700 p-1 rounded font-bold">OK</div>
-                        <div className="bg-white p-1 rounded border border-slate-100 text-emerald-600 font-black">98.4%</div>
+                    {/* IMAGEN DE VISTA PREVIA REAL DEL PRODUCTO */}
+                    <div className="relative w-full rounded-2xl overflow-hidden border border-slate-200/90 bg-white shadow-2xs group cursor-pointer">
+                      <img
+                        src="/excel_dashboard_preview.png"
+                        alt="Vista previa oficial Dashboard Logístico Excel"
+                        className="w-full h-auto object-cover group-hover:scale-[1.01] transition-transform duration-300"
+                      />
+                      <div className="absolute top-2.5 right-2.5 bg-slate-900/80 backdrop-blur-xs text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider shadow-xs">
+                        Vista Previa Real
                       </div>
                     </div>
 
