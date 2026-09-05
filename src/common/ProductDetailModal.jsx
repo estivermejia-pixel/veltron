@@ -62,108 +62,131 @@ export default function ProductDetailModal({ isOpen, onClose, onPayWompi }) {
             {/* Cuerpo Scrollable */}
             <div className="p-6 sm:p-8 overflow-y-auto space-y-6 text-slate-700 text-xs sm:text-sm leading-relaxed">
               
-              {/* Bajada y Resumen */}
-              <div className="bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200/80 space-y-2">
-                <p className="font-black text-[#111827] text-sm sm:text-base">
-                  Convierte tus datos logísticos en decisiones inteligentes.
+              {/* Bajada Ejecutivo/Corporativo */}
+              <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200/90 space-y-2.5">
+                <p className="font-extrabold text-[#111827] text-sm sm:text-base tracking-tight">
+                  Solución analítica ejecutiva para la gestión integral de operaciones logísticas.
                 </p>
-                <p className="text-slate-600 font-medium leading-normal text-xs">
-                  Un dashboard diseñado para <strong>centralizar, controlar y analizar toda la operación logística desde Excel</strong>, permitiéndote visualizar en un solo lugar los principales indicadores de transporte, entregas, costos, pedidos y desempeño.
+                <p className="text-slate-600 font-medium leading-relaxed text-xs">
+                  Plataforma en Excel diseñada para <strong>centralizar, supervisar y evaluar la cadena de suministro</strong>. Permite la visualización consolidada de indicadores clave de gestión (KPIs) en transporte, entregas, costos operativos y procesamiento de pedidos.
                 </p>
               </div>
 
               {/* Imagen de Vista Previa */}
-              <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-sm bg-white">
+              <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-xs bg-white">
                 <img
                   src="/excel_dashboard_preview.png"
-                  alt="Vista Previa Real Dashboard Logístico Excel"
+                  alt="Vista Previa Oficial Dashboard Logístico Excel"
                   className="w-full h-auto object-cover"
                 />
               </div>
 
-              {/* Lista de Capacidades */}
+              {/* Ficha Técnica y Especificaciones del Modelo */}
+              <div className="bg-slate-900 text-slate-100 p-5 rounded-2xl space-y-3 shadow-xs">
+                <h3 className="text-xs font-black uppercase tracking-widest text-emerald-400 flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                  <span>Especificaciones Técnicas del Modelo</span>
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-300">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                    <span>Estructura 100% editable y personalizable</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                    <span>Conexión dinámica a bases de datos configurables</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                    <span>Fórmulas avanzadas desarrolladas en español</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                    <span>Sin celdas bloqueadas ni hojas ocultas</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Lista de Capacidades Analíticas */}
               <div className="space-y-3">
-                <h3 className="font-black text-[#111827] text-sm uppercase tracking-wider flex items-center gap-2">
+                <h3 className="font-black text-[#111827] text-xs uppercase tracking-wider flex items-center gap-2">
                   <Target className="w-4 h-4 text-[#1E3A8A]" />
-                  <span>Con esta herramienta podrás:</span>
+                  <span>Capacidades Analíticas Operativas:</span>
                 </h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  <div className="p-3 bg-white rounded-xl border border-slate-200/80 flex items-start gap-2.5">
+                  <div className="p-3.5 bg-white rounded-xl border border-slate-200/80 flex items-start gap-3">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                     <div>
-                      <strong className="text-slate-900 block">Controlar pedidos y entregas</strong>
-                      <span className="text-[11px] text-slate-500">Monitoreo en tiempo real.</span>
+                      <strong className="text-slate-900 block font-bold text-xs">Monitoreo de Pedidos y Entregas</strong>
+                      <span className="text-[11px] text-slate-500">Control continuo del flujo operativo y despachos.</span>
                     </div>
                   </div>
 
-                  <div className="p-3 bg-white rounded-xl border border-slate-200/80 flex items-start gap-2.5">
+                  <div className="p-3.5 bg-white rounded-xl border border-slate-200/80 flex items-start gap-3">
                     <Truck className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
                     <div>
-                      <strong className="text-slate-900 block">Desempeño de transporte</strong>
-                      <span className="text-[11px] text-slate-500">Evaluación por centros de distribución.</span>
+                      <strong className="text-slate-900 block font-bold text-xs">Evaluación de Transporte y Nodos</strong>
+                      <span className="text-[11px] text-slate-500">Diagnóstico de eficiencia en flotas y centros.</span>
                     </div>
                   </div>
 
-                  <div className="p-3 bg-white rounded-xl border border-slate-200/80 flex items-start gap-2.5">
+                  <div className="p-3.5 bg-white rounded-xl border border-slate-200/80 flex items-start gap-3">
                     <DollarSign className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                     <div>
-                      <strong className="text-slate-900 block">Costos logísticos</strong>
-                      <span className="text-[11px] text-slate-500">Identifica y controla gastos operativos.</span>
+                      <strong className="text-slate-900 block font-bold text-xs">Auditoría de Costos Logísticos</strong>
+                      <span className="text-[11px] text-slate-500">Identificación y control de gastos operativos.</span>
                     </div>
                   </div>
 
-                  <div className="p-3 bg-white rounded-xl border border-slate-200/80 flex items-start gap-2.5">
+                  <div className="p-3.5 bg-white rounded-xl border border-slate-200/80 flex items-start gap-3">
                     <TrendingUp className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
                     <div>
-                      <strong className="text-slate-900 block">Indicadores clave (KPIs)</strong>
-                      <span className="text-[11px] text-slate-500">Medición precisa de la operación.</span>
+                      <strong className="text-slate-900 block font-bold text-xs">Indicadores Clave (KPIs)</strong>
+                      <span className="text-[11px] text-slate-500">Medición estandarizada del rendimiento.</span>
                     </div>
                   </div>
 
-                  <div className="p-3 bg-white rounded-xl border border-slate-200/80 flex items-start gap-2.5">
-                    <Clock className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                  <div className="p-3.5 bg-white rounded-xl border border-slate-200/80 flex items-start gap-3">
+                    <Clock className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                     <div>
-                      <strong className="text-slate-900 block">Detectar retrasos</strong>
-                      <span className="text-[11px] text-slate-500">Prevención de incumplimientos de entrega.</span>
+                      <strong className="text-slate-900 block font-bold text-xs">Prevención de Incumplimientos</strong>
+                      <span className="text-[11px] text-slate-500">Detección oportuna de demoras y contingencias.</span>
                     </div>
                   </div>
 
-                  <div className="p-3 bg-white rounded-xl border border-slate-200/80 flex items-start gap-2.5">
+                  <div className="p-3.5 bg-white rounded-xl border border-slate-200/80 flex items-start gap-3">
                     <BarChart3 className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
                     <div>
-                      <strong className="text-slate-900 block">Visualizar tendencias</strong>
-                      <span className="text-[11px] text-slate-500">Oportunidades inmediatas de mejora.</span>
+                      <strong className="text-slate-900 block font-bold text-xs">Análisis de Tendencias</strong>
+                      <span className="text-[11px] text-slate-500">Identificación de áreas de optimización.</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* ¿Para quién es? */}
-              <div className="bg-blue-50/60 p-5 rounded-2xl border border-blue-100 space-y-2">
-                <h3 className="font-black text-[#1E3A8A] text-sm uppercase tracking-wider flex items-center gap-2">
+              {/* Perfil de Aplicación Corporativa */}
+              <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200/90 space-y-2">
+                <h3 className="font-black text-[#1E3A8A] text-xs uppercase tracking-wider flex items-center gap-2">
                   <Users className="w-4 h-4 text-[#1E3A8A]" />
-                  <span>🚀 ¿Para quién es?</span>
+                  <span>Perfil de Aplicación Corporativa</span>
                 </h3>
                 <p className="text-xs text-slate-700 font-medium leading-relaxed">
-                  Ideal para <strong>empresas, emprendedores, coordinadores logísticos, supervisores de transporte, administradores de almacenes y profesionales de operaciones</strong> que necesitan tener mayor control sin invertir en un software logístico costoso.
+                  Diseñado para <strong>empresas, directivos, coordinadores de logística, supervisores de distribución, jefes de almacén y analistas de operaciones</strong> que requieren un control analítico riguroso sin incurrir en licencias ni desarrollos de software complejos.
                 </p>
               </div>
 
-              {/* Propuesta de Valor */}
-              <div className="bg-amber-50/80 p-5 rounded-2xl border border-amber-200 space-y-3">
-                <h3 className="font-black text-amber-900 text-sm uppercase tracking-wider flex items-center gap-2">
-                  <Lightbulb className="w-4 h-4 text-amber-600" />
-                  <span>💡 La propuesta de valor</span>
+              {/* Propuesta de Valor Ejecutivo */}
+              <div className="bg-[#FEFCE8] p-5 rounded-2xl border border-amber-200/90 space-y-3">
+                <h3 className="font-black text-amber-950 text-xs uppercase tracking-wider flex items-center gap-2">
+                  <Lightbulb className="w-4 h-4 text-amber-700" />
+                  <span>Propuesta de Valor Ejecutivo</span>
                 </h3>
-                <p className="text-xs text-amber-950 font-bold">
-                  Deja de trabajar con múltiples archivos y datos dispersos. Centraliza tu información en un dashboard profesional, visual y fácil de usar.
+                <p className="text-xs text-amber-950 font-medium leading-relaxed">
+                  Sustituya la dispersión de datos y múltiples archivos heterogéneos por un modelo analítico unificado, estructurado y de lectura inmediata. La herramienta procesa los datos de origen y los transforma de forma automática en métricas ejecutivas para la toma de decisiones informadas y oportunas.
                 </p>
-                <p className="text-xs text-amber-900 font-medium">
-                  Tú ingresas los datos. El dashboard convierte la información en indicadores para saber qué está pasando, dónde están los problemas y dónde puedes mejorar.
-                </p>
-                <div className="pt-2 text-xs font-black text-slate-900 border-t border-amber-200/80">
-                  👉 Más control. Menos tiempo buscando información. Mejores decisiones.
+                <div className="pt-2 text-xs font-bold text-slate-900 border-t border-amber-200/80">
+                  Mayor control operativo · Reducción de tiempo analítico · Decisiones basadas en datos
                 </div>
               </div>
 

@@ -155,24 +155,24 @@ export default function CatalogPage() {
                       </div>
                     </div>
 
-                    {/* Descripción Breve con Desplegable + Botón Ver Modal Completo */}
-                    <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs space-y-2.5">
-                      <p className="text-xs text-slate-700 font-semibold leading-relaxed">
-                        100% editable. Todo conectado a bases y hojas de datos configurables, fórmulas en español, sin celdas u hojas ocultas.
+                    {/* Descripción Breve Corporativa + Botón Ver Modal Completo */}
+                    <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs space-y-2">
+                      <p className="text-xs text-slate-800 font-bold leading-relaxed">
+                        Modelo en Excel 100% editable. Conexión dinámica a bases de datos configurables, formulación avanzada en español y sin celdas bloqueadas ni ocultas.
                       </p>
                       
                       <p className="text-xs text-slate-600 font-medium leading-relaxed">
-                        Un dashboard diseñado para centralizar, controlar y analizar toda la operación logística desde Excel (transporte, entregas, costos, pedidos y desempeño).
+                        Plataforma ejecutiva orientada a centralizar, supervisar y evaluar la cadena de suministro (transporte, entregas, costos operativos y volumen de pedidos).
                       </p>
 
-                      <div className="pt-1 flex items-center justify-between border-t border-slate-100">
+                      <div className="pt-2 flex items-center justify-between border-t border-slate-100">
                         <button
                           type="button"
                           onClick={() => setIsDetailModalOpen(true)}
-                          className="inline-flex items-center gap-1.5 text-xs font-black text-[#1E3A8A] hover:text-[#2563EB] hover:underline cursor-pointer"
+                          className="inline-flex items-center gap-1.5 text-xs font-extrabold text-[#1E3A8A] hover:text-[#2563EB] hover:underline cursor-pointer"
                         >
-                          <span>Ver detalle completo y capacidades</span>
-                          <span className="text-[10px] bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full border border-blue-200">Modal ↗</span>
+                          <span>Ver ficha técnica y capacidades analíticas</span>
+                          <span className="text-[10px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full border border-slate-200 font-semibold">Detalle ↗</span>
                         </button>
                       </div>
                     </div>
