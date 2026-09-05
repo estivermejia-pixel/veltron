@@ -40,9 +40,6 @@ export default function ProductDetailModal({ isOpen, onClose, onPayWompi }) {
             {/* Header Modal */}
             <div className="px-6 py-5 bg-gradient-to-r from-blue-900 via-[#1E3A8A] to-slate-900 text-white flex items-center justify-between border-b border-blue-800/50 shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-400 flex items-center justify-center shrink-0">
-                  <Sparkles className="w-5 h-5" />
-                </div>
                 <div>
                   <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400 block">
                     Producto Digital de la Semana

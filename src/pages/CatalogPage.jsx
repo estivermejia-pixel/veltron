@@ -104,9 +104,8 @@ export default function CatalogPage() {
 
               {/* ENCABEZADO DE TARJETA CON DEGRADADO SUAVE */}
               <div className="px-6 sm:px-8 pt-5 pb-3.5" style={{ background: 'linear-gradient(to right, #FEFCE8 0%, #FFFFFF 65%)' }}>
-                <h2 className="text-[20px] sm:text-[23px] md:text-[25px] font-black text-[#111827] leading-[1.15] tracking-tight flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-[#4F46E5] shrink-0" />
-                  <span>Producto Digital de la Semana</span>
+                <h2 className="text-[20px] sm:text-[23px] md:text-[25px] font-black text-[#111827] leading-[1.15] tracking-tight">
+                  Producto Digital de la Semana
                 </h2>
               </div>
 
@@ -127,7 +126,10 @@ export default function CatalogPage() {
                           <span className="text-[10px] font-black uppercase tracking-widest text-emerald-700 block">
                             {activeProduct?.tipo === 'libro' ? 'Guía / Libro PDF' : 'Plantilla Excel Profesional'}
                           </span>
-                          <h3 className="text-base sm:text-lg font-black text-[#111827] leading-snug truncate">
+                          <h3
+                            onClick={() => setIsDetailModalOpen(true)}
+                            className="text-base sm:text-lg font-black text-[#111827] leading-snug truncate cursor-pointer hover:text-[#1E3A8A] transition-colors"
+                          >
                             {(!activeProduct?.titulo || activeProduct.titulo === 'Producto Digital de la Semana') ? 'Logistics Management Excel Dashboard' : activeProduct.titulo}
                           </h3>
                         </div>
@@ -153,20 +155,26 @@ export default function CatalogPage() {
                       </div>
                     </div>
 
-                    {/* Descripción Breve con Botón para Abrir Modal Flotante Centrado */}
-                    <div className="bg-white p-3.5 rounded-xl border border-slate-200/60 shadow-2xs space-y-2">
+                    {/* Descripción Breve con Desplegable + Botón Ver Modal Completo */}
+                    <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs space-y-2.5">
+                      <p className="text-xs text-slate-700 font-semibold leading-relaxed">
+                        100% editable. Todo conectado a bases y hojas de datos configurables, fórmulas en español, sin celdas u hojas ocultas.
+                      </p>
+                      
                       <p className="text-xs text-slate-600 font-medium leading-relaxed">
-                        Contenido digital exclusivo de la semana listo para descarga inmediata con aporte o monto libre.
+                        Un dashboard diseñado para centralizar, controlar y analizar toda la operación logística desde Excel (transporte, entregas, costos, pedidos y desempeño).
                       </p>
 
-                      <button
-                        type="button"
-                        onClick={() => setIsDetailModalOpen(true)}
-                        className="inline-flex items-center gap-1.5 text-[11px] font-black text-[#1E3A8A] hover:text-[#2563EB] hover:underline cursor-pointer pt-0.5"
-                      >
-                        <span>Seguir leyendo & Ver detalle completo</span>
-                        <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                      </button>
+                      <div className="pt-1 flex items-center justify-between border-t border-slate-100">
+                        <button
+                          type="button"
+                          onClick={() => setIsDetailModalOpen(true)}
+                          className="inline-flex items-center gap-1.5 text-xs font-black text-[#1E3A8A] hover:text-[#2563EB] hover:underline cursor-pointer"
+                        >
+                          <span>Ver detalle completo y capacidades</span>
+                          <span className="text-[10px] bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full border border-blue-200">Modal ↗</span>
+                        </button>
+                      </div>
                     </div>
 
                   </div>
