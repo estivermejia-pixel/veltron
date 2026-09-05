@@ -163,18 +163,6 @@ export default function CatalogPage() {
                       {activeProduct?.descripcion || 'Contenido digital exclusivo de la semana listo para descarga inmediata con aporte o monto libre.'}
                     </p>
 
-                    {/* Ficha Resumen Compacta */}
-                    <div className="grid grid-cols-2 gap-3 pt-1">
-                      <div className="bg-white p-3 rounded-xl border border-slate-200/60 flex flex-col space-y-0.5">
-                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Modalidad</span>
-                        <span className="text-xs font-black text-[#111827]">Aporte Voluntario</span>
-                      </div>
-                      <div className="bg-white p-3 rounded-xl border border-slate-200/60 flex flex-col space-y-0.5">
-                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Comisión</span>
-                        <span className="text-xs font-black text-emerald-600">$0 COP</span>
-                      </div>
-                    </div>
-
                   </div>
                 )}
               </div>
