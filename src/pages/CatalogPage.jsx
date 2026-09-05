@@ -7,7 +7,7 @@ import WhatYouGet from '../features/landing/components/WhatYouGet';
 import Testimonials from '../features/landing/components/Testimonials';
 import FAQ from '../features/landing/components/FAQ';
 import FinalCTA from '../features/landing/components/FinalCTA';
-import { Sparkles, Check, Clock, ShieldCheck } from 'lucide-react';
+import { Sparkles, Check, Clock, ShieldCheck, FileSpreadsheet } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 import SEOHead from '../components/SEOHead';
 
@@ -117,15 +117,15 @@ export default function CatalogPage() {
                     {/* Header de la Vista Previa */}
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-center gap-3.5 min-w-0">
-                        <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-[#1E3A8A] to-[#2563EB] text-white flex items-center justify-center font-black shadow-xs shrink-0 text-xs uppercase tracking-wider">
-                          {activeProduct?.tipo === 'excel' ? 'XLSX' : 'PDF'}
+                        <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-emerald-600 to-teal-700 text-white flex items-center justify-center font-black shadow-xs shrink-0 text-xs uppercase tracking-wider">
+                          {activeProduct?.tipo === 'libro' ? 'PDF' : 'XLSX'}
                         </div>
                         <div className="min-w-0">
-                          <span className="text-[10px] font-black uppercase tracking-widest text-[#1E3A8A] block">
-                            {activeProduct?.tipo === 'excel' ? 'Plantilla Excel Profesional' : 'Guía / Libro PDF'}
+                          <span className="text-[10px] font-black uppercase tracking-widest text-emerald-700 block">
+                            {activeProduct?.tipo === 'libro' ? 'Guía / Libro PDF' : 'Plantilla Excel Profesional'}
                           </span>
                           <h3 className="text-base sm:text-lg font-black text-[#111827] leading-snug truncate">
-                            {activeProduct?.titulo || 'Producto Digital de la Semana'}
+                            {activeProduct?.titulo || 'Excel Logistics & Inventory Management Pro'}
                           </h3>
                         </div>
                       </div>
@@ -134,9 +134,33 @@ export default function CatalogPage() {
                       </span>
                     </div>
 
-                    {/* Descripción del Producto */}
+                    {/* Simulación Gráfica de Hoja Excel / Vista Previa */}
+                    <div className="bg-emerald-950/5 border border-emerald-500/20 rounded-xl p-3 flex flex-col space-y-2 font-mono text-[11px] overflow-hidden select-none">
+                      <div className="flex items-center justify-between border-b border-emerald-900/10 pb-1.5 text-[10px] text-emerald-800 font-bold">
+                        <span className="flex items-center gap-1.5">
+                          <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
+                          Logistics_Inventory_Dashboard.xlsx
+                        </span>
+                        <span className="text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded text-[9px] font-black uppercase">
+                          Excel Dashboard Pro
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-4 gap-1 text-[10px] font-semibold text-slate-600 text-center">
+                        <div className="bg-emerald-100/60 p-1 rounded font-bold text-emerald-900">SKU</div>
+                        <div className="bg-emerald-100/60 p-1 rounded font-bold text-emerald-900">Stock</div>
+                        <div className="bg-emerald-100/60 p-1 rounded font-bold text-emerald-900">Estado</div>
+                        <div className="bg-emerald-100/60 p-1 rounded font-bold text-emerald-900">KPI</div>
+                        
+                        <div className="bg-white p-1 rounded border border-slate-100">LOG-849</div>
+                        <div className="bg-white p-1 rounded border border-slate-100">1,240 u</div>
+                        <div className="bg-emerald-50 text-emerald-700 p-1 rounded font-bold">OK</div>
+                        <div className="bg-white p-1 rounded border border-slate-100 text-emerald-600 font-black">98.4%</div>
+                      </div>
+                    </div>
+
+                    {/* Descripción del Producto Solicitada */}
                     <p className="text-xs text-slate-600 font-medium leading-relaxed bg-white p-3.5 rounded-xl border border-slate-200/60 shadow-2xs">
-                      {activeProduct?.descripcion || 'Acceso completo al producto digital exclusivo de esta semana con descarga inmediata tras verificar tu aporte libre.'}
+                      {activeProduct?.descripcion || 'Contenido digital exclusivo de la semana listo para descarga inmediata con aporte o monto libre.'}
                     </p>
 
                     {/* Ficha Resumen Compacta */}
