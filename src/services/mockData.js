@@ -4,8 +4,8 @@ const initialProducts = [
   {
     id: 'prod-001-digital',
     tipo: 'excel',
-    titulo: 'Excel Logistics & Inventory Management Pro',
-    descripcion: 'Contenido digital exclusivo de la semana listo para descarga inmediata con aporte o monto libre.',
+    titulo: 'Logistics Management Excel Dashboard',
+    descripcion: '100% editable y totalmente conectada a bases y hojas de datos configurables, fórmulas en español, sin celdas u hojas ocultas.',
     precio: 1000,
     archivo_path: 'productos/excel_logistica_inventarios.xlsx',
     imagen_preview: '/excel_dashboard_preview.png',

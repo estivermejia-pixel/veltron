@@ -7,7 +7,7 @@ import WhatYouGet from '../features/landing/components/WhatYouGet';
 import Testimonials from '../features/landing/components/Testimonials';
 import FAQ from '../features/landing/components/FAQ';
 import FinalCTA from '../features/landing/components/FinalCTA';
-import { Sparkles, Check, Clock, ShieldCheck, FileSpreadsheet } from 'lucide-react';
+import { Sparkles, Check, Clock, ShieldCheck, FileSpreadsheet, ChevronDown, ChevronUp } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 import SEOHead from '../components/SEOHead';
 
@@ -22,6 +22,7 @@ export default function CatalogPage() {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showFullDesc, setShowFullDesc] = useState(false);
 
   useEffect(() => {
     async function loadData() {
@@ -125,7 +126,7 @@ export default function CatalogPage() {
                             {activeProduct?.tipo === 'libro' ? 'Guía / Libro PDF' : 'Plantilla Excel Profesional'}
                           </span>
                           <h3 className="text-base sm:text-lg font-black text-[#111827] leading-snug truncate">
-                            {(!activeProduct?.titulo || activeProduct.titulo === 'Producto Digital de la Semana') ? 'Excel Logistics & Inventory Management Pro' : activeProduct.titulo}
+                            {(!activeProduct?.titulo || activeProduct.titulo === 'Producto Digital de la Semana') ? 'Logistics Management Excel Dashboard' : activeProduct.titulo}
                           </h3>
                         </div>
                       </div>
@@ -146,10 +147,37 @@ export default function CatalogPage() {
                       </div>
                     </div>
 
-                    {/* Descripción del Producto Solicitada */}
-                    <p className="text-xs text-slate-600 font-medium leading-relaxed bg-white p-3.5 rounded-xl border border-slate-200/60 shadow-2xs">
-                      {activeProduct?.descripcion || 'Contenido digital exclusivo de la semana listo para descarga inmediata con aporte o monto libre.'}
-                    </p>
+                    {/* Descripción del Producto con Desplegable Seguir Leyendo */}
+                    <div className="bg-white p-3.5 rounded-xl border border-slate-200/60 shadow-2xs space-y-2">
+                      <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                        Contenido digital exclusivo de la semana listo para descarga inmediata con aporte o monto libre.
+                      </p>
+
+                      {showFullDesc && (
+                        <motion.p
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="text-xs text-slate-700 font-semibold leading-relaxed border-t border-slate-100 pt-2 text-[#1E3A8A]"
+                        >
+                          {activeProduct?.descripcion || '100% editable y totalmente conectada a bases y hojas de datos configurables, fórmulas en español, sin celdas u hojas ocultas.'}
+                        </motion.p>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={() => setShowFullDesc(!showFullDesc)}
+                        className="inline-flex items-center gap-1 text-[11px] font-black text-[#1E3A8A] hover:underline cursor-pointer pt-0.5"
+                      >
+                        <span>{showFullDesc ? 'Leer menos' : 'Seguir leyendo'}</span>
+                        {showFullDesc ? (
+                          <ChevronUp className="w-3.5 h-3.5" />
+                        ) : (
+                          <ChevronDown className="w-3.5 h-3.5" />
+                        )}
+                      </button>
+                    </div>
 
                   </div>
                 )}
