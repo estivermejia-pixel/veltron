@@ -125,7 +125,7 @@ export default function CatalogPage() {
                             {activeProduct?.tipo === 'libro' ? 'Guía / Libro PDF' : 'Plantilla Excel Profesional'}
                           </span>
                           <h3 className="text-base sm:text-lg font-black text-[#111827] leading-snug truncate">
-                            {activeProduct?.titulo || 'Excel Logistics & Inventory Management Pro'}
+                            {(!activeProduct?.titulo || activeProduct.titulo === 'Producto Digital de la Semana') ? 'Excel Logistics & Inventory Management Pro' : activeProduct.titulo}
                           </h3>
                         </div>
                       </div>

@@ -3,12 +3,12 @@
 const initialProducts = [
   {
     id: 'prod-001-digital',
-    tipo: 'digital',
-    titulo: 'Producto Digital de la Semana',
+    tipo: 'excel',
+    titulo: 'Excel Logistics & Inventory Management Pro',
     descripcion: 'Contenido digital exclusivo de la semana listo para descarga inmediata con aporte o monto libre.',
     precio: 1000,
-    archivo_path: 'productos/producto_digital_semanal.pdf',
-    imagen_preview: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=80',
+    archivo_path: 'productos/excel_logistica_inventarios.xlsx',
+    imagen_preview: '/excel_dashboard_preview.png',
     activo: true,
     semana_inicio: '2026-09-01',
     semana_fin: '2026-09-07'
