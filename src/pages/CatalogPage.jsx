@@ -150,44 +150,23 @@ export default function CatalogPage() {
                     </motion.div>
                   </motion.div>
 
-                  {/* SECCIÓN PRODUCTO */}
-                  <div className="space-y-1.5">
-                    <span className="text-[9px] font-black uppercase tracking-[0.18em] text-slate-400 block">
-                      PRODUCTO DIGITAL INCLUIDO CON TU PAGO
-                    </span>
-
+                  {/* SECCIÓN PRODUCTO INCLUIDO */}
+                  <div className="pt-1 space-y-1.5">
                     {loading ? (
-                      <div className="h-14 bg-slate-100 rounded-2xl animate-pulse" />
+                      <div className="h-10 bg-slate-100 rounded-xl animate-pulse" />
                     ) : (
-                      <motion.div
-                        className="bg-white border border-slate-200 rounded-2xl px-4 py-3 flex items-center justify-between gap-3 cursor-default"
-                        whileHover={shouldReduceMotion ? {} : { scale: 1.01, borderColor: '#c7d2fe' }}
-                        transition={{ duration: 0.18 }}
-                      >
-                        <div className="flex items-center gap-3 min-w-0">
-                          <div className="w-9 h-9 rounded-full bg-[#EEF2FF] flex items-center justify-center shrink-0">
-                            <Sparkles style={{ width: '17px', height: '17px' }} className="text-[#4F46E5]" />
-                          </div>
-                          <div className="min-w-0">
-                            <span className="text-[9px] font-black uppercase tracking-widest text-[#4F46E5] block">
-                              PRODUCTO DE LA SEMANA
-                            </span>
-                            <span className="text-[13px] font-semibold text-[#111827] block truncate">
-                              {activeProduct?.titulo || 'Producto Digital de la Semana'}
-                            </span>
-                          </div>
+                      <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3 flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <Sparkles className="w-4 h-4 text-[#4F46E5] shrink-0" />
+                          <span className="text-xs font-bold text-[#111827] truncate">
+                            {activeProduct?.titulo || 'Producto Digital Activo'}
+                          </span>
                         </div>
-                        <Check className="w-5 h-5 text-emerald-500 stroke-[2.5] shrink-0" />
-                      </motion.div>
+                        <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 shrink-0">
+                          Incluido
+                        </span>
+                      </div>
                     )}
-                  </div>
-
-                  {/* PIE DE TARJETA DERECHA */}
-                  <div className="pt-3 border-t border-slate-100 flex items-center justify-end">
-                    <span className="text-xs text-slate-500 font-semibold flex items-center gap-1.5 shrink-0">
-                      <Clock className="w-4 h-4 text-amber-500" />
-                      Disponible esta semana
-                    </span>
                   </div>
 
                 </div>
