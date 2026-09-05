@@ -18,7 +18,8 @@ export {
   getAdminOrders,
   updateOrderStatus,
   getAuditLogs,
-  getPaymentAlerts
+  getPaymentAlerts,
+  calculateRevenueStats
 } from './ordersService';
 
 export {

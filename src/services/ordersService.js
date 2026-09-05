@@ -203,3 +203,49 @@ export async function getPaymentAlerts() {
   return data || [];
 }
 
+export function calculateRevenueStats(orders = []) {
+  const approved = orders.filter(o => o.estado === 'aprobado');
+  
+  let totalRevenue = 0;
+  const methodMap = { wompi: 0, 'bre-b': 0 };
+  const productMap = {};
+  const dailyMap = {};
+
+  approved.forEach((ord) => {
+    // Estimación de monto (por defecto 1000 COP o precio del producto si está cargado)
+    const amount = ord.products?.precio || 1000;
+    totalRevenue += amount;
+
+    // Método de Pago
+    const method = ord.metodo_pago === 'wompi' ? 'wompi' : 'bre-b';
+    methodMap[method] = (methodMap[method] || 0) + amount;
+
+    // Productos
+    const title = ord.products?.titulo || ord.product_titulo || 'Producto Digital';
+    if (!productMap[title]) {
+      productMap[title] = { titulo: title, ventas: 0, total: 0 };
+    }
+    productMap[title].ventas += 1;
+    productMap[title].total += amount;
+
+    // Tendencia Diaria (Fecha YYYY-MM-DD)
+    const dateStr = ord.created_at ? new Date(ord.created_at).toISOString().split('T')[0] : 'Hoy';
+    dailyMap[dateStr] = (dailyMap[dateStr] || 0) + amount;
+  });
+
+  const productRanking = Object.values(productMap).sort((a, b) => b.total - a.total);
+  const dailyTrend = Object.entries(dailyMap)
+    .map(([date, total]) => ({ date, total }))
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  return {
+    totalRevenue,
+    totalApproved: approved.length,
+    avgTicket: approved.length > 0 ? Math.round(totalRevenue / approved.length) : 0,
+    methodMap,
+    productRanking,
+    dailyTrend
+  };
+}
+
+

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { getAdminOrders, updateOrderStatus, createProduct, getRequests, updateRequestStatus, getContactMessages, markMessageAsRead, deleteContactMessage, getAuditLogs, getPaymentAlerts } from '../services/api';
+import { getAdminOrders, updateOrderStatus, createProduct, getRequests, updateRequestStatus, getContactMessages, markMessageAsRead, deleteContactMessage, getAuditLogs, getPaymentAlerts, calculateRevenueStats } from '../services/api';
+import { exportOrdersToCSV } from '../utils/csvExporter';
 import ReceiptPreviewModal from '../common/ReceiptPreviewModal';
-import { ShieldCheck, CheckCircle2, XCircle, Clock, Plus, ExternalLink, RefreshCw, FileText, MessageSquare, Mail, Bell, Trash2, Eye, ShieldAlert, Activity } from 'lucide-react';
+import { ShieldCheck, CheckCircle2, XCircle, Clock, Plus, ExternalLink, RefreshCw, FileText, MessageSquare, Mail, Bell, Trash2, Eye, ShieldAlert, Activity, DollarSign, TrendingUp, Download, BarChart3, PieChart } from 'lucide-react';
 import { useFileLoading } from '../context/FileLoadingContext';
 
 export default function AdminPage() {
@@ -13,6 +14,7 @@ export default function AdminPage() {
   const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('ordenes');
+  const [revenueRange, setRevenueRange] = useState('all'); // '7d', 'month', 'all'
   const [selectedReceipt, setSelectedReceipt] = useState(null);
 
   // Formulario nuevo producto
@@ -173,6 +175,17 @@ export default function AdminPage() {
       {/* Tabs de Navegación Admin */}
       <div className="flex items-center gap-3 border-b border-slate-200/80 flex-wrap">
         <button
+          onClick={() => setActiveTab('ingresos')}
+          className={`pb-3 px-2 text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 ${
+            activeTab === 'ingresos'
+              ? 'text-[#1E3A8A] border-[#1E3A8A]'
+              : 'text-slate-500 border-transparent hover:text-[#2C2C2C]'
+          }`}
+        >
+          <TrendingUp className="w-3.5 h-3.5" />
+          <span>Ingresos & Ventas</span>
+        </button>
+        <button
           onClick={() => setActiveTab('ordenes')}
           className={`pb-3 px-2 text-xs font-bold transition-all border-b-2 ${
             activeTab === 'ordenes'
@@ -237,6 +250,195 @@ export default function AdminPage() {
           )}
         </button>
       </div>
+
+      {/* TAB 0: INGRESOS Y REPORTES FINANCIEROS */}
+      {activeTab === 'ingresos' && (() => {
+        const filteredForRevenue = orders.filter((o) => {
+          if (!o.created_at) return true;
+          const time = new Date(o.created_at).getTime();
+          const now = Date.now();
+          if (revenueRange === '7d') return (now - time) <= 7 * 86400000;
+          if (revenueRange === 'month') return (now - time) <= 30 * 86400000;
+          return true;
+        });
+
+        const stats = calculateRevenueStats(filteredForRevenue);
+        const maxDaily = Math.max(...stats.dailyTrend.map(d => d.total), 1);
+
+        return (
+          <div className="space-y-6">
+            {/* Header de Filtros y Botón de Exportación CSV */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-5 rounded-3xl border border-slate-200/80 shadow-2xs">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-black text-slate-500 uppercase tracking-wider">Período:</span>
+                <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs font-bold">
+                  <button
+                    onClick={() => setRevenueRange('all')}
+                    className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${revenueRange === 'all' ? 'bg-[#1E3A8A] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
+                  >
+                    Todo el Historial
+                  </button>
+                  <button
+                    onClick={() => setRevenueRange('month')}
+                    className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${revenueRange === 'month' ? 'bg-[#1E3A8A] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
+                  >
+                    Este Mes
+                  </button>
+                  <button
+                    onClick={() => setRevenueRange('7d')}
+                    className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${revenueRange === '7d' ? 'bg-[#1E3A8A] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
+                  >
+                    Últimos 7 Días
+                  </button>
+                </div>
+              </div>
+
+              <button
+                onClick={() => exportOrdersToCSV(orders)}
+                className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black flex items-center gap-2 shadow-xs active:scale-95 transition-all cursor-pointer"
+              >
+                <Download className="w-4 h-4" /> Exportar Reporte Contable (.CSV)
+              </button>
+            </div>
+
+            {/* 3 Tarjetas KPI Principales */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="glass-card bg-linear-to-br from-blue-900 to-[#1E3A8A] text-white p-6 rounded-3xl shadow-sm space-y-2">
+                <div className="flex items-center justify-between text-blue-200 text-xs font-bold uppercase tracking-wider">
+                  <span>Ingresos Totales (COP)</span>
+                  <DollarSign className="w-4 h-4 text-[#FFD53D]" />
+                </div>
+                <div className="text-3xl font-black text-white">
+                  ${stats.totalRevenue.toLocaleString('es-CO')} <span className="text-xs font-normal text-blue-200">COP</span>
+                </div>
+                <p className="text-[11px] text-blue-200">Recaudación neta acumulada de órdenes aprobadas.</p>
+              </div>
+
+              <div className="glass-card bg-white p-6 rounded-3xl border border-slate-200/80 shadow-2xs space-y-2">
+                <div className="flex items-center justify-between text-slate-400 text-xs font-bold uppercase tracking-wider">
+                  <span>Órdenes Aprobadas</span>
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                </div>
+                <div className="text-3xl font-black text-[#2C2C2C]">
+                  {stats.totalApproved} <span className="text-xs font-bold text-slate-400">ventas</span>
+                </div>
+                <p className="text-[11px] text-slate-500">Transacciones confirmadas y entregadas.</p>
+              </div>
+
+              <div className="glass-card bg-white p-6 rounded-3xl border border-slate-200/80 shadow-2xs space-y-2">
+                <div className="flex items-center justify-between text-slate-400 text-xs font-bold uppercase tracking-wider">
+                  <span>Ticket Promedio por Aporte</span>
+                  <TrendingUp className="w-4 h-4 text-blue-600" />
+                </div>
+                <div className="text-3xl font-black text-[#2C2C2C]">
+                  ${stats.avgTicket.toLocaleString('es-CO')} <span className="text-xs font-bold text-slate-400">COP</span>
+                </div>
+                <p className="text-[11px] text-slate-500">Promedio de valor de compra voluntaria por cliente.</p>
+              </div>
+            </div>
+
+            {/* Gráfica Ambiental de Tendencia Diaria */}
+            <div className="glass-card bg-white p-6 rounded-3xl border border-slate-200/80 shadow-2xs space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div className="flex items-center gap-2">
+                  <BarChart3 className="w-5 h-5 text-[#1E3A8A]" />
+                  <h3 className="text-sm font-black text-[#2C2C2C]">Tendencia Diaria de Ventas</h3>
+                </div>
+                <span className="text-[11px] font-bold text-slate-400">Ingresos agrupados por día</span>
+              </div>
+
+              {stats.dailyTrend.length === 0 ? (
+                <p className="text-xs text-slate-400 font-medium text-center py-8">No hay datos de ingresos registrados en el período seleccionado.</p>
+              ) : (
+                <div className="h-44 flex items-end justify-between gap-2 pt-6 px-2">
+                  {stats.dailyTrend.map((item, idx) => {
+                    const heightPercent = Math.max((item.total / maxDaily) * 100, 12);
+                    return (
+                      <div key={idx} className="flex-1 flex flex-col items-center gap-2 group h-full justify-end">
+                        <div className="text-[10px] font-mono font-bold text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-900 text-white px-1.5 py-0.5 rounded-md">
+                          ${item.total.toLocaleString('es-CO')}
+                        </div>
+                        <div
+                          style={{ height: `${heightPercent}%` }}
+                          className="w-full bg-linear-to-t from-[#1E3A8A] to-blue-500 rounded-t-lg group-hover:to-emerald-500 transition-all shadow-xs"
+                        />
+                        <span className="text-[9px] font-mono text-slate-400 truncate max-w-[50px]">
+                          {item.date.slice(5)}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Grid 2 Columnas: Desglose por Método de Pago & Ranking de Productos */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Desglose Métodos de Pago */}
+              <div className="glass-card bg-white p-6 rounded-3xl border border-slate-200/80 shadow-2xs space-y-4">
+                <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
+                  <PieChart className="w-5 h-5 text-blue-600" />
+                  <h3 className="text-sm font-black text-[#2C2C2C]">Canales y Métodos de Pago</h3>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="p-4 rounded-2xl border border-slate-100 bg-slate-50 flex items-center justify-between">
+                    <div>
+                      <div className="text-xs font-black text-[#2C2C2C]">Wompi Pasarela Segura</div>
+                      <div className="text-[10px] text-slate-400 font-bold">Tarjetas de Crédito, PSE, Nequi</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm font-black text-[#1E3A8A]">${(stats.methodMap.wompi || 0).toLocaleString('es-CO')} COP</div>
+                      <div className="text-[10px] text-slate-400 font-bold">
+                        {stats.totalRevenue > 0 ? Math.round(((stats.methodMap.wompi || 0) / stats.totalRevenue) * 100) : 0}% del total
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-2xl border border-slate-100 bg-slate-50 flex items-center justify-between">
+                    <div>
+                      <div className="text-xs font-black text-[#2C2C2C]">Llave Bancolombia / Bre-B</div>
+                      <div className="text-[10px] text-slate-400 font-bold">Transferencia cuenta a cuenta ($0 costo)</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm font-black text-emerald-700">${(stats.methodMap['bre-b'] || 0).toLocaleString('es-CO')} COP</div>
+                      <div className="text-[10px] text-slate-400 font-bold">
+                        {stats.totalRevenue > 0 ? Math.round(((stats.methodMap['bre-b'] || 0) / stats.totalRevenue) * 100) : 0}% del total
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Ranking Productos Más Vendidos */}
+              <div className="glass-card bg-white p-6 rounded-3xl border border-slate-200/80 shadow-2xs space-y-4">
+                <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
+                  <TrendingUp className="w-5 h-5 text-emerald-600" />
+                  <h3 className="text-sm font-black text-[#2C2C2C]">Productos Más Vendidos</h3>
+                </div>
+
+                {stats.productRanking.length === 0 ? (
+                  <p className="text-xs text-slate-400 font-medium py-4 text-center">Sin datos de ventas de productos en este período.</p>
+                ) : (
+                  <div className="space-y-3">
+                    {stats.productRanking.slice(0, 4).map((prod, idx) => (
+                      <div key={idx} className="p-3.5 rounded-2xl border border-slate-100 bg-slate-50 flex items-center justify-between gap-3">
+                        <div className="max-w-xs truncate">
+                          <div className="text-xs font-bold text-[#2C2C2C] truncate">{prod.titulo}</div>
+                          <div className="text-[10px] text-slate-400 font-bold">{prod.ventas} {prod.ventas === 1 ? 'unidad vendida' : 'unidades vendidas'}</div>
+                        </div>
+                        <div className="text-xs font-mono font-black text-[#1E3A8A] whitespace-nowrap">
+                          ${prod.total.toLocaleString('es-CO')} COP
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* TAB 1: ÓRDENES Y VERIFICACIÓN EN 1 CLIC */}
       {activeTab === 'ordenes' && (
