@@ -101,75 +101,59 @@ export default function CatalogPage() {
 
               {/* ENCABEZADO DE TARJETA CON DEGRADADO SUAVE */}
               <div className="px-6 sm:px-8 pt-5 pb-3.5" style={{ background: 'linear-gradient(to right, #FEFCE8 0%, #FFFFFF 65%)' }}>
-                <h2 className="text-[20px] sm:text-[23px] md:text-[25px] font-black text-[#111827] leading-[1.15] tracking-tight">
-                  Escanea con tu banco o paga online.
+                <h2 className="text-[20px] sm:text-[23px] md:text-[25px] font-black text-[#111827] leading-[1.15] tracking-tight flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-[#4F46E5] shrink-0" />
+                  <span>Producto Digital de la Semana</span>
                 </h2>
               </div>
 
-                {/* CUERPO */}
-                <div className="px-6 sm:px-8 pb-5 pt-1 space-y-4 flex flex-col">
-
-                  {/* TARJETA INTERNA: MONTO A PAGAR */}
-                  <motion.div
-                    className="bg-[#F8F9FA] border border-slate-200 rounded-2xl px-5 py-3.5 space-y-2.5 cursor-default"
-                    whileHover={shouldReduceMotion ? {} : { y: -2, boxShadow: '0 4px 16px rgba(0,0,0,0.06)' }}
-                    transition={{ duration: 0.2, ease: 'easeOut' }}
-                  >
-                    <span className="text-[9px] font-black uppercase tracking-[0.18em] text-slate-400 block">
-                      MONTO A PAGAR
-                    </span>
-                    <div className="flex items-baseline gap-3 flex-wrap">
-                      <span className="text-[24px] sm:text-[28px] md:text-[32px] font-black text-[#111827] leading-none tracking-tight">
-                        Monto Libre
-                      </span>
-                      <span className="text-[11px] font-semibold text-slate-400 leading-none">
-                        Aporte Voluntario
+              {/* CUERPO: ESPACIO DE VISTA PREVIA DEL PRODUCTO */}
+              <div className="px-6 sm:px-8 pb-6 pt-3 space-y-4 flex flex-col">
+                {loading ? (
+                  <div className="h-44 bg-slate-100 rounded-2xl animate-pulse" />
+                ) : (
+                  <div className="bg-[#F8F9FA] border border-slate-200/90 rounded-2xl p-5 space-y-4">
+                    
+                    {/* Header de la Vista Previa */}
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-center gap-3.5 min-w-0">
+                        <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-[#1E3A8A] to-[#2563EB] text-white flex items-center justify-center font-black shadow-xs shrink-0 text-xs uppercase tracking-wider">
+                          {activeProduct?.tipo === 'excel' ? 'XLSX' : 'PDF'}
+                        </div>
+                        <div className="min-w-0">
+                          <span className="text-[10px] font-black uppercase tracking-widest text-[#1E3A8A] block">
+                            {activeProduct?.tipo === 'excel' ? 'Plantilla Excel Profesional' : 'Guía / Libro PDF'}
+                          </span>
+                          <h3 className="text-base sm:text-lg font-black text-[#111827] leading-snug truncate">
+                            {activeProduct?.titulo || 'Producto Digital de la Semana'}
+                          </h3>
+                        </div>
+                      </div>
+                      <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase text-emerald-700 bg-emerald-100 border border-emerald-200 px-2.5 py-1 rounded-full shrink-0">
+                        <Check className="w-3 h-3" /> Incluido
                       </span>
                     </div>
-                    <hr className="border-slate-200/80" />
-                    
-                    {/* 3 columnas con stagger */}
-                    <motion.div
-                      className="grid grid-cols-3 gap-2"
-                      variants={colVariants}
-                      initial="hidden"
-                      animate="visible"
-                    >
-                      <motion.div className="space-y-0.5" variants={colItem}>
-                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">ENTIDAD</span>
-                        <span className="text-[12px] font-bold text-[#111827]">Veltron Capital</span>
-                      </motion.div>
-                      <motion.div className="space-y-0.5" variants={colItem}>
-                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">LLAVE / MEDIO</span>
-                        <span className="text-[12px] font-bold text-[#111827]">@veltroncapital</span>
-                      </motion.div>
-                      <motion.div className="space-y-0.5" variants={colItem}>
-                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">COMISIÓN</span>
-                        <span className="text-[12px] font-black text-emerald-600">$0 COP</span>
-                      </motion.div>
-                    </motion.div>
-                  </motion.div>
 
-                  {/* SECCIÓN PRODUCTO INCLUIDO */}
-                  <div className="pt-1 space-y-1.5">
-                    {loading ? (
-                      <div className="h-10 bg-slate-100 rounded-xl animate-pulse" />
-                    ) : (
-                      <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3 flex items-center justify-between gap-3">
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          <Sparkles className="w-4 h-4 text-[#4F46E5] shrink-0" />
-                          <span className="text-xs font-bold text-[#111827] truncate">
-                            {activeProduct?.titulo || 'Producto Digital Activo'}
-                          </span>
-                        </div>
-                        <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 shrink-0">
-                          Incluido
-                        </span>
+                    {/* Descripción del Producto */}
+                    <p className="text-xs text-slate-600 font-medium leading-relaxed bg-white p-3.5 rounded-xl border border-slate-200/60 shadow-2xs">
+                      {activeProduct?.descripcion || 'Acceso completo al producto digital exclusivo de esta semana con descarga inmediata tras verificar tu aporte libre.'}
+                    </p>
+
+                    {/* Ficha Resumen Compacta */}
+                    <div className="grid grid-cols-2 gap-3 pt-1">
+                      <div className="bg-white p-3 rounded-xl border border-slate-200/60 flex flex-col space-y-0.5">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Modalidad</span>
+                        <span className="text-xs font-black text-[#111827]">Aporte Voluntario</span>
                       </div>
-                    )}
-                  </div>
+                      <div className="bg-white p-3 rounded-xl border border-slate-200/60 flex flex-col space-y-0.5">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Comisión</span>
+                        <span className="text-xs font-black text-emerald-600">$0 COP</span>
+                      </div>
+                    </div>
 
-                </div>
+                  </div>
+                )}
+              </div>
               </div>
           </motion.div>
 
