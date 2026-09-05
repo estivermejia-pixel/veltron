@@ -139,19 +139,19 @@ export default function CatalogPage() {
                       </span>
                     </div>
 
-                    {/* IMAGEN DE VISTA PREVIA REAL DEL PRODUCTO (Abre Modal al Clic) */}
+                    {/* IMAGEN DE VISTA PREVIA REAL DEL PRODUCTO (Tamaño Reducido & Compacto) */}
                     <div
                       onClick={() => setIsDetailModalOpen(true)}
-                      className="relative w-full rounded-2xl overflow-hidden border border-slate-200/90 bg-white shadow-2xs group cursor-pointer"
-                      title="Haz clic para ver el detalle completo del producto"
+                      className="relative w-full max-h-48 sm:max-h-56 md:max-h-60 rounded-2xl overflow-hidden border border-slate-200/90 bg-slate-100 shadow-2xs group cursor-pointer flex items-start justify-center"
+                      title="Haz clic para ver el detalle completo en pantalla grande"
                     >
                       <img
                         src="/excel_dashboard_preview.png"
                         alt="Vista previa oficial Dashboard Logístico Excel"
-                        className="w-full h-auto object-cover group-hover:scale-[1.01] transition-transform duration-300"
+                        className="w-full h-auto object-cover object-top group-hover:scale-[1.02] transition-transform duration-300"
                       />
                       <div className="absolute top-2.5 right-2.5 bg-slate-900/80 backdrop-blur-xs text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider shadow-xs">
-                        Vista Previa Real
+                        Vista Previa Real ↗
                       </div>
                     </div>
 
