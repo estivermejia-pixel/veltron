@@ -1,6 +1,6 @@
 export const BENEFITS_DATA = [
-  'Archivos editables listos para descargar',
-  'Guía paso a paso en PDF',
-  'Acceso inmediato tras la verificación',
-  'Actualizaciones sin costo adicional'
+  'Plantilla Excel 100% editable (.XLSX)',
+  'Tableros y fórmulas avanzadas en español',
+  'Bases de datos y listas configurables',
+  'Descarga e inicio inmediato tras verificación'
 ];
