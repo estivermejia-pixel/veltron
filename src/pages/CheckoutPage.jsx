@@ -7,9 +7,12 @@ import WompiCheckoutWidget from '../features/checkout/components/WompiCheckoutWi
 import SEOHead from '../components/SEOHead';
 import { ArrowLeft, CheckCircle2, QrCode, Upload, AlertCircle, Loader2, Wallet, Zap, ShieldCheck } from 'lucide-react';
 
+import { useFileLoading } from '../context/FileLoadingContext';
+
 export default function CheckoutPage() {
   const { productId } = useParams();
   const navigate = useNavigate();
+  const { startLoading, updateProgress, setSuccess, setError: setFileError } = useFileLoading();
 
   const [product, setProduct] = useState(null);
   const [loadingProduct, setLoadingProduct] = useState(true);
@@ -108,7 +111,14 @@ export default function CheckoutPage() {
     setSubmitting(true);
     setErrorMsg('');
 
+    startLoading({
+      operation: 'upload',
+      fileName: capturaFile ? capturaFile.name : 'comprobante_bancario.jpg',
+      initialProgress: 20,
+    });
+
     try {
+      updateProgress(50);
       await createOrder({
         product_id: productId,
         nombre_comprador: nombre,
@@ -119,10 +129,16 @@ export default function CheckoutPage() {
         metodo_pago: 'bre-b'
       });
 
-      navigate(`/estado?ref=${encodeURIComponent(referencia)}&exito=true`);
+      updateProgress(100);
+      setSuccess('Comprobante registrado exitosamente.');
+
+      setTimeout(() => {
+        navigate(`/estado?ref=${encodeURIComponent(referencia)}&exito=true`);
+      }, 1200);
     } catch (err) {
       console.error(err);
       setErrorMsg(err.message || 'Error registrando la orden. Inténtalo de nuevo.');
+      setFileError(err.message || 'Error al subir el comprobante.');
     } finally {
       setSubmitting(false);
     }

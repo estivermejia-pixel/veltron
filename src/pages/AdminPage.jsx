@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { getAdminOrders, updateOrderStatus, createProduct, getRequests, updateRequestStatus, getContactMessages, markMessageAsRead, deleteContactMessage } from '../services/api';
 import ReceiptPreviewModal from '../common/ReceiptPreviewModal';
 import { ShieldCheck, CheckCircle2, XCircle, Clock, Plus, ExternalLink, RefreshCw, FileText, MessageSquare, Mail, Bell, Trash2, Eye } from 'lucide-react';
+import { useFileLoading } from '../context/FileLoadingContext';
 
 export default function AdminPage() {
+  const { startLoading, updateProgress, setSuccess, setError: setFileError } = useFileLoading();
   const [orders, setOrders] = useState([]);
   const [requests, setRequests] = useState([]);
   const [messages, setMessages] = useState([]);
@@ -68,12 +70,28 @@ export default function AdminPage() {
     if (!titulo.trim()) return;
 
     setCreatingProd(true);
+
+    if (file) {
+      startLoading({
+        operation: 'upload',
+        fileName: file.name,
+        initialProgress: 25,
+      });
+    }
+
     try {
+      if (file) updateProgress(65);
       await createProduct(
         { titulo, tipo, descripcion, semana_inicio: semanaInicio, semana_fin: semanaFin },
         file,
         null
       );
+
+      if (file) {
+        updateProgress(100);
+        setSuccess('Producto digital subido y registrado con éxito.');
+      }
+
       setTitulo('');
       setDescripcion('');
       setFile(null);
@@ -82,6 +100,7 @@ export default function AdminPage() {
       loadData();
     } catch (err) {
       console.error(err);
+      if (file) setFileError(err.message || 'Error al subir el producto digital.');
     } finally {
       setCreatingProd(false);
     }

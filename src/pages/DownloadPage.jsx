@@ -3,8 +3,11 @@ import { useParams, Link } from 'react-router-dom';
 import { validateAndGetDownload, markTokenAsUsed } from '../services/api';
 import { Download, CheckCircle2, Lock, Clock, FileCheck, Loader2 } from 'lucide-react';
 
+import { useFileLoading } from '../context/FileLoadingContext';
+
 export default function DownloadPage() {
   const { token } = useParams();
+  const { startLoading, updateProgress, setSuccess } = useFileLoading();
 
   const [loading, setLoading] = useState(true);
   const [downloadInfo, setDownloadInfo] = useState(null);
@@ -27,7 +30,19 @@ export default function DownloadPage() {
 
   const handleDownloadClick = async () => {
     setDownloaded(true);
-    await markTokenAsUsed(token);
+    startLoading({
+      operation: 'download',
+      fileName: filename || 'producto_digital.pdf',
+      initialProgress: 35,
+    });
+    try {
+      updateProgress(80);
+      await markTokenAsUsed(token);
+      updateProgress(100);
+      setSuccess('Descarga iniciada con éxito.');
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   if (loading) {
