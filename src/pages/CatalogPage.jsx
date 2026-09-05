@@ -110,73 +110,65 @@ export default function CatalogPage() {
               </div>
 
               {/* CUERPO: ESPACIO DE VISTA PREVIA DEL PRODUCTO */}
-              <div className="px-6 sm:px-8 pb-6 pt-3 space-y-4 flex flex-col">
+              <div className="px-6 sm:px-8 pb-6 pt-3 space-y-3 flex flex-col">
                 {loading ? (
                   <div className="h-44 bg-slate-100 rounded-2xl animate-pulse" />
                 ) : (
-                  <div className="bg-[#F8F9FA] border border-slate-200/90 rounded-2xl p-5 space-y-4">
-                    
-                    {/* Header de la Vista Previa */}
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-center gap-3.5 min-w-0">
-                        <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-emerald-600 to-teal-700 text-white flex items-center justify-center font-black shadow-xs shrink-0 text-xs uppercase tracking-wider">
-                          {activeProduct?.tipo === 'libro' ? 'PDF' : 'XLSX'}
-                        </div>
-                        <div className="min-w-0">
-                          <span className="text-[10px] font-black uppercase tracking-widest text-emerald-700 block">
-                            {activeProduct?.tipo === 'libro' ? 'Guía / Libro PDF' : 'Plantilla Excel Profesional'}
-                          </span>
-                          <h3
-                            onClick={() => setIsDetailModalOpen(true)}
-                            className="text-base sm:text-lg font-black text-[#111827] leading-snug truncate cursor-pointer hover:text-[#1E3A8A] transition-colors"
-                          >
-                            {(!activeProduct?.titulo || activeProduct.titulo === 'Producto Digital de la Semana') ? 'Logistics Management Excel Dashboard' : activeProduct.titulo}
-                          </h3>
-                        </div>
-                      </div>
-                      <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase text-emerald-700 bg-emerald-100 border border-emerald-200 px-2.5 py-1 rounded-full shrink-0">
-                        <Check className="w-3 h-3" /> Incluido
-                      </span>
-                    </div>
-
-                    {/* IMAGEN DE VISTA PREVIA REAL DEL PRODUCTO (Tamaño Reducido & Compacto) */}
-                    <div
-                      onClick={() => setIsDetailModalOpen(true)}
-                      className="relative w-full max-h-48 sm:max-h-56 md:max-h-60 rounded-2xl overflow-hidden border border-slate-200/90 bg-slate-100 shadow-2xs group cursor-pointer flex items-start justify-center"
-                      title="Haz clic para ver el detalle completo en pantalla grande"
-                    >
-                      <img
-                        src="/excel_dashboard_preview.png"
-                        alt="Vista previa oficial Dashboard Logístico Excel"
-                        className="w-full h-auto object-cover object-top group-hover:scale-[1.02] transition-transform duration-300"
-                      />
-                      <div className="absolute top-2.5 right-2.5 bg-slate-900/80 backdrop-blur-xs text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider shadow-xs">
-                        Vista Previa Real ↗
-                      </div>
-                    </div>
-
-                    {/* Descripción Breve Corporativa + Botón Ver Modal Completo */}
-                    <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs space-y-2">
-                      <p className="text-xs text-slate-800 font-bold leading-relaxed">
-                        Modelo en Excel 100% editable. Conexión dinámica a bases de datos configurables, formulación avanzada en español y sin celdas bloqueadas ni ocultas.
-                      </p>
+                  <>
+                    <div className="bg-[#F8F9FA] border border-slate-200/90 rounded-2xl p-5 space-y-4">
                       
-                      <p className="text-xs text-slate-600 font-medium leading-relaxed">
-                        Plataforma ejecutiva orientada a centralizar, supervisar y evaluar la cadena de suministro (transporte, entregas, costos operativos y volumen de pedidos).
-                      </p>
-
-                      <div className="pt-2 flex items-center justify-between border-t border-slate-100">
-                        <button
-                          type="button"
-                          onClick={() => setIsDetailModalOpen(true)}
-                          className="inline-flex items-center gap-1.5 text-xs font-extrabold text-[#1E3A8A] hover:text-[#2563EB] hover:underline cursor-pointer"
-                        >
-                          <span>Ver ficha técnica y capacidades analíticas</span>
-                        </button>
+                      {/* Header de la Vista Previa */}
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-center gap-3.5 min-w-0">
+                          <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-emerald-600 to-teal-700 text-white flex items-center justify-center font-black shadow-xs shrink-0 text-xs uppercase tracking-wider">
+                            {activeProduct?.tipo === 'libro' ? 'PDF' : 'XLSX'}
+                          </div>
+                          <div className="min-w-0">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-emerald-700 block">
+                              {activeProduct?.tipo === 'libro' ? 'Guía / Libro PDF' : 'Plantilla Excel Profesional'}
+                            </span>
+                            <h3
+                              onClick={() => setIsDetailModalOpen(true)}
+                              className="text-base sm:text-lg font-black text-[#111827] leading-snug truncate cursor-pointer hover:text-[#1E3A8A] transition-colors"
+                            >
+                              {(!activeProduct?.titulo || activeProduct.titulo === 'Producto Digital de la Semana') ? 'Logistics Management Excel Dashboard' : activeProduct.titulo}
+                            </h3>
+                          </div>
+                        </div>
+                        <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase text-emerald-700 bg-emerald-100 border border-emerald-200 px-2.5 py-1 rounded-full shrink-0">
+                          <Check className="w-3 h-3" /> Incluido
+                        </span>
                       </div>
+
+                      {/* IMAGEN DE VISTA PREVIA REAL COMPLETA (Aprovecha todo el espacio) */}
+                      <div
+                        onClick={() => setIsDetailModalOpen(true)}
+                        className="relative w-full rounded-2xl overflow-hidden border border-slate-200/90 bg-white shadow-2xs group cursor-pointer"
+                        title="Haz clic para ver el detalle completo en pantalla grande"
+                      >
+                        <img
+                          src="/excel_dashboard_preview.png"
+                          alt="Vista previa oficial Dashboard Logístico Excel"
+                          className="w-full h-auto object-cover group-hover:scale-[1.01] transition-transform duration-300"
+                        />
+                        <div className="absolute top-2.5 right-2.5 bg-slate-900/80 backdrop-blur-xs text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider shadow-xs">
+                          Vista Previa Real ↗
+                        </div>
+                      </div>
+
                     </div>
 
-                  </div>
+                    {/* Único Enlace al Modal fuera del Recuadro Interior */}
+                    <div className="pt-1.5 px-1">
+                      <button
+                        type="button"
+                        onClick={() => setIsDetailModalOpen(true)}
+                        className="inline-flex items-center gap-1.5 text-xs font-extrabold text-[#1E3A8A] hover:text-[#2563EB] hover:underline cursor-pointer"
+                      >
+                        <span>Ver ficha técnica y capacidades analíticas</span>
+                      </button>
+                    </div>
+                  </>
                 )}
               </div>
               </div>
