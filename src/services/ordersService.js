@@ -174,3 +174,32 @@ export async function updateOrderStatus(orderId, estado) {
     return data;
   }
 }
+
+export async function getAuditLogs() {
+  if (!isSupabaseConfigured) return [];
+  const { data, error } = await supabase
+    .from('payment_audit_logs')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(50);
+  if (error) {
+    console.error('Error cargando audit logs:', error);
+    return [];
+  }
+  return data || [];
+}
+
+export async function getPaymentAlerts() {
+  if (!isSupabaseConfigured) return [];
+  const { data, error } = await supabase
+    .from('payment_alerts')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(50);
+  if (error) {
+    console.error('Error cargando payment alerts:', error);
+    return [];
+  }
+  return data || [];
+}
+

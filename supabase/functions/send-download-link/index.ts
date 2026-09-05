@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-const SITE_URL = Deno.env.get("SITE_URL") || "https://biblioteca-digital.vercel.app";
+const SITE_URL = Deno.env.get("SITE_URL") || "https://veltroncapital.com";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -29,7 +29,7 @@ serve(async (req) => {
       console.warn("RESEND_API_KEY no configurada. URL de descarga:", downloadUrl);
       return new Response(
         JSON.stringify({
-          message: "Modo prueba: correo simulado",
+          message: "Modo demostración: enlace generado exitosamente",
           downloadUrl,
         }),
         { status: 200, headers: { "Content-Type": "application/json" } }
@@ -43,22 +43,38 @@ serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "Biblioteca Digital <descargas@resend.dev>",
+        from: "Veltron Capital <descargas@veltroncapital.com>",
         to: [email],
-        subject: `¡Tu producto digital está listo! — ${titulo_producto || "Biblioteca Digital"}`,
+        subject: `¡Tu producto digital está listo! — ${titulo_producto || "Veltron Capital"}`,
         html: `
-          <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto; padding: 20px;">
-            <h2 style="color: #0d9488;">¡Pago Confirmado! 🎉</h2>
-            <p>Hemos verificado con éxito tu pago para la orden con referencia <strong>${referencia}</strong>.</p>
-            <p>Ya puedes descargar tu archivo digital: <strong>${titulo_producto}</strong>.</p>
-            <div style="margin: 30px 0; text-align: center;">
-              <a href="${downloadUrl}" style="background-color: #0d9488; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
-                Descargar Archivo Ahora
+          <div style="font-family: system-ui, -apple-system, sans-serif; max-width: 520px; margin: 0 auto; padding: 24px; background-color: #ffffff; border-radius: 12px; border: 1px solid #e5e7eb;">
+            <div style="text-align: center; margin-bottom: 20px;">
+              <h2 style="color: #0284c7; margin: 0; font-size: 24px;">Veltron Capital</h2>
+              <p style="color: #6b7280; font-size: 14px; margin-top: 4px;">Confirmación de Pedido y Enlace de Descarga</p>
+            </div>
+            
+            <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+              <h3 style="color: #166534; margin: 0 0 8px 0; font-size: 16px;">¡Pago Verificado con Éxito! 🎉</h3>
+              <p style="color: #15803d; margin: 0; font-size: 14px;">Hemos confirmado tu pago para la referencia <strong>${referencia}</strong>.</p>
+            </div>
+
+            <p style="color: #374151; font-size: 15px;">Tu archivo digital <strong>${titulo_producto || "Producto Digital"}</strong> ya se encuentra disponible para su descarga inmediata.</p>
+            
+            <div style="margin: 32px 0; text-align: center;">
+              <a href="${downloadUrl}" style="background: linear-gradient(135deg, #0284c7, #2563eb); color: white; padding: 14px 32px; text-decoration: none; border-radius: 10px; font-weight: 600; font-size: 15px; display: inline-block; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);">
+                Descargar Producto Ahora
               </a>
             </div>
-            <p style="font-size: 12px; color: #666;">* Este enlace vence en 48 horas y puede usarse para la descarga.</p>
-            <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
-            <p style="font-size: 11px; color: #999; text-align: center;">Biblioteca Digital — Paga $1.000. Descarga en minutos.</p>
+
+            <p style="font-size: 12px; color: #9ca3af; text-align: center; margin-bottom: 24px;">
+              * Este enlace es de un solo uso y vencerá automáticamente en 48 horas por seguridad.
+            </p>
+            
+            <hr style="border: none; border-top: 1px solid #f3f4f6; margin: 20px 0;" />
+            <p style="font-size: 11px; color: #9ca3af; text-align: center; margin: 0;">
+              Veltron Capital — Paga lo que gustes. Descarga en minutos.<br/>
+              Si tienes preguntas, contáctanos a soporte@veltroncapital.com
+            </p>
           </div>
         `,
       }),

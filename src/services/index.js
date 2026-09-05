@@ -16,7 +16,9 @@ export {
   createOrder,
   searchOrders,
   getAdminOrders,
-  updateOrderStatus
+  updateOrderStatus,
+  getAuditLogs,
+  getPaymentAlerts
 } from './ordersService';
 
 export {

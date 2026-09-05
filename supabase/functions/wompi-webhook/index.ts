@@ -9,30 +9,40 @@ async function sha256(str: string): Promise<string> {
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-// Obtener valor anidado de un objeto por ruta con puntos (ej. "transaction.id")
 function getNestedValue(obj: any, path: string): any {
   return path.split('.').reduce((acc, part) => (acc && acc[part] !== undefined ? acc[part] : ''), obj);
 }
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: { 'Access-Control-Allow-Origin': '*' } });
+    return new Response('ok', {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+      },
+    });
   }
 
   try {
-    const eventsSecret = Deno.env.get('WOMPI_EVENTS_SECRET') || 'test_events_secret';
-
+    const eventsSecret = Deno.env.get('WOMPI_EVENTS_SECRET') || '';
     const payload = await req.json();
-    console.log('Evento Webhook Wompi recibido:', payload.event);
 
-    const { event, data, timestamp, signature } = payload;
+    console.log('Evento Webhook Wompi recibido:', payload?.event);
+
+    const { event, data, timestamp, signature } = payload || {};
 
     if (!data || !signature || !signature.properties || !signature.checksum) {
-      return new Response('Payload de Webhook inválido', { status: 400 });
+      return new Response(JSON.stringify({ error: 'Payload de Webhook inválido' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
-    // 1. Reconstruir la cadena para la firma de evento
-    // Wompi concatena: valores de propiedades + timestamp + WOMPI_EVENTS_SECRET
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || Deno.env.get('SUPABASE_ANON_KEY') || '';
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // 1. Verificación Criptográfica de la Firma del Evento
     let concatenatedValues = '';
     for (const propPath of signature.properties) {
       const val = getNestedValue(data, propPath);
@@ -41,28 +51,39 @@ serve(async (req) => {
     concatenatedValues += `${timestamp}${eventsSecret}`;
 
     const calculatedChecksum = await sha256(concatenatedValues);
+    const isSignatureValid = calculatedChecksum.toLowerCase() === signature.checksum.toLowerCase();
 
-    // En ambiente de producción se debe hacer verificación estricta.
-    // Si el secret no está configurado (modo desarrollo/test), registramos advertencia.
-    if (calculatedChecksum.toLowerCase() !== signature.checksum.toLowerCase()) {
-      console.warn('Checksum de evento Wompi no coincide. Calculado:', calculatedChecksum, 'Recibido:', signature.checksum);
-      // Descomentar para estricto en prod: return new Response('Firma inválida', { status: 400 });
+    if (eventsSecret && !isSignatureValid) {
+      console.error('Firma inválida de Webhook Wompi. Calculada:', calculatedChecksum, 'Recibida:', signature.checksum);
+
+      await supabase.from('payment_alerts').insert([
+        {
+          severity: 'CRITICAL',
+          alert_type: 'SIGNATURE_INVALID',
+          message: 'Intento de webhook con firma inválida o alterada',
+          payload: { received: signature.checksum, calculated: calculatedChecksum, raw: payload }
+        }
+      ]);
+
+      return new Response(JSON.stringify({ error: 'Firma de webhook inválida' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || Deno.env.get('SUPABASE_ANON_KEY') || '';
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
+    // 2. Procesar evento transaction.updated
     if (event === 'transaction.updated' && data.transaction) {
       const transaction = data.transaction;
       const ref = transaction.reference;
       const transactionId = transaction.id;
       const status = transaction.status;
+      const amountInCents = transaction.amount_in_cents || 0;
+      const amountCop = amountInCents / 100;
 
-      console.log(`Transacción Wompi ${transactionId} (Ref: ${ref}) Estado: ${status}`);
+      console.log(`Transacción Wompi ${transactionId} (Ref: ${ref}) Estado: ${status} Monto: ${amountCop} COP`);
 
-      // Buscar la orden por referencia o por ID de transacción
-      let query = supabase.from('orders').select('id, estado');
+      // Buscar orden por referencia o por transaction ID
+      let query = supabase.from('orders').select('id, product_id, email_comprador, estado, products(titulo)');
       if (ref) {
         query = query.eq('referencia_pago', ref);
       } else {
@@ -77,57 +98,93 @@ serve(async (req) => {
 
       if (orderData) {
         if (status === 'APPROVED') {
-          if (orderData.estado === 'aprobado') {
-            console.log(`Orden ${orderData.id} ya aprobada previa e idempotente.`);
-            return new Response(JSON.stringify({ received: true }), { status: 200 });
-          }
-
-          // Invocar procedimiento almacenado approve_order
-          const { error: rpcErr } = await supabase.rpc('approve_order', { p_order_id: orderData.id });
+          // Invocar procedimiento de conciliación automatizada process_automated_approval
+          const { data: approvalResult, error: rpcErr } = await supabase.rpc('process_automated_approval', {
+            p_order_id: orderData.id,
+            p_provider: 'wompi',
+            p_raw_payload: payload,
+            p_monto_recibido: amountCop
+          });
 
           if (rpcErr) {
-            console.warn('RPC approve_order falló, aplicando fallback directo:', rpcErr);
+            console.error('Error invocando RPC process_automated_approval:', rpcErr);
 
-            await supabase
-              .from('orders')
-              .update({
-                estado: 'aprobado',
-                wompi_transaction_id: transactionId,
-                aprobado_at: new Date().toISOString()
-              })
-              .eq('id', orderData.id);
-
-            const token = Math.random().toString(36).substring(2) + Date.now().toString(36);
-            const expira = new Date(Date.now() + 48 * 3600 * 1000).toISOString();
-
-            await supabase
-              .from('download_links')
-              .insert([{ order_id: orderData.id, token, expira_en: expira, usado: false }]);
-          } else {
+            await supabase.from('payment_alerts').insert([
+              {
+                order_id: orderData.id,
+                severity: 'CRITICAL',
+                alert_type: 'TOKEN_GEN_FAILED',
+                message: `Fallo RPC en aprobación automática: ${rpcErr.message}`,
+                payload: { error: rpcErr, payload }
+              }
+            ]);
+          } else if (approvalResult && approvalResult.success) {
             // Actualizar wompi_transaction_id
             await supabase
               .from('orders')
-              .update({ wompi_transaction_id: transactionId })
+              .update({ wompi_transaction_id: transactionId, metodo_pago: 'wompi' })
               .eq('id', orderData.id);
-          }
 
-          console.log(`Orden ${orderData.id} aprobada exitosamente vía Wompi.`);
+            // Disparar envío de correo si tenemos un token generado
+            if (approvalResult.token) {
+              const productTitle = orderData.products?.titulo || 'Producto Digital';
+              try {
+                await fetch(`${supabaseUrl}/functions/v1/send-download-link`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${supabaseServiceKey}`
+                  },
+                  body: JSON.stringify({
+                    email: orderData.email_comprador,
+                    token: approvalResult.token,
+                    titulo_producto: productTitle,
+                    referencia: ref
+                  })
+                });
+              } catch (emailErr) {
+                console.error('Fallo enviando correo de descarga:', emailErr);
+                await supabase.from('payment_alerts').insert([
+                  {
+                    order_id: orderData.id,
+                    severity: 'WARNING',
+                    alert_type: 'EMAIL_SEND_FAILED',
+                    message: `Orden aprobada pero falló el envío de correo: ${emailErr.message}`,
+                    payload: { email: orderData.email_comprador, token: approvalResult.token }
+                  }
+                ]);
+              }
+            }
+
+            console.log(`Orden ${orderData.id} conciliada y aprobada exitosamente vía Webhook Wompi.`);
+          }
         } else if (status === 'DECLINED' || status === 'VOIDED' || status === 'ERROR') {
           await supabase
             .from('orders')
             .update({ estado: 'rechazado', wompi_transaction_id: transactionId })
             .eq('id', orderData.id);
-          
-          console.log(`Orden ${orderData.id} marcada como rechazada.`);
+
+          await supabase.from('payment_audit_logs').insert([
+            {
+              order_id: orderData.id,
+              event_type: `wompi.${status.toLowerCase()}`,
+              provider: 'wompi',
+              raw_payload: payload,
+              signature_valid: isSignatureValid,
+              monto_recibido: amountCop,
+              estado_previo: orderData.estado,
+              estado_nuevo: 'rechazado'
+            }
+          ]);
         }
       } else {
-        console.warn(`No se encontró orden para la referencia Wompi ${ref}`);
+        console.warn(`No se encontró orden registrada para la referencia Wompi ${ref}`);
       }
     }
 
-    return new Response(JSON.stringify({ received: true }), {
+    return new Response(JSON.stringify({ received: true, status: 'processed' }), {
       status: 200,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     });
   } catch (err) {
     console.error('Error procesando Webhook de Wompi:', err);

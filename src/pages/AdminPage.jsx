@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { getAdminOrders, updateOrderStatus, createProduct, getRequests, updateRequestStatus, getContactMessages, markMessageAsRead, deleteContactMessage } from '../services/api';
+import { getAdminOrders, updateOrderStatus, createProduct, getRequests, updateRequestStatus, getContactMessages, markMessageAsRead, deleteContactMessage, getAuditLogs, getPaymentAlerts } from '../services/api';
 import ReceiptPreviewModal from '../common/ReceiptPreviewModal';
-import { ShieldCheck, CheckCircle2, XCircle, Clock, Plus, ExternalLink, RefreshCw, FileText, MessageSquare, Mail, Bell, Trash2, Eye } from 'lucide-react';
+import { ShieldCheck, CheckCircle2, XCircle, Clock, Plus, ExternalLink, RefreshCw, FileText, MessageSquare, Mail, Bell, Trash2, Eye, ShieldAlert, Activity } from 'lucide-react';
 import { useFileLoading } from '../context/FileLoadingContext';
 
 export default function AdminPage() {
@@ -9,6 +9,8 @@ export default function AdminPage() {
   const [orders, setOrders] = useState([]);
   const [requests, setRequests] = useState([]);
   const [messages, setMessages] = useState([]);
+  const [auditLogs, setAuditLogs] = useState([]);
+  const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('ordenes');
   const [selectedReceipt, setSelectedReceipt] = useState(null);
@@ -26,14 +28,18 @@ export default function AdminPage() {
   const loadData = async () => {
     setLoading(true);
     try {
-      const [ordData, reqData, msgData] = await Promise.all([
+      const [ordData, reqData, msgData, logsData, alertsData] = await Promise.all([
         getAdminOrders(),
         getRequests(),
-        getContactMessages()
+        getContactMessages(),
+        getAuditLogs(),
+        getPaymentAlerts()
       ]);
       setOrders(ordData);
       setRequests(reqData);
       setMessages(msgData || []);
+      setAuditLogs(logsData || []);
+      setAlerts(alertsData || []);
     } catch (err) {
       console.error(err);
     } finally {
@@ -212,6 +218,22 @@ export default function AdminPage() {
             </span>
           ) : (
             <span className="text-slate-400">({messages.length})</span>
+          )}
+        </button>
+        <button
+          onClick={() => setActiveTab('auditoria')}
+          className={`pb-3 px-2 text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 ${
+            activeTab === 'auditoria'
+              ? 'text-[#1E3A8A] border-[#1E3A8A]'
+              : 'text-slate-500 border-transparent hover:text-[#2C2C2C]'
+          }`}
+        >
+          <Activity className="w-3.5 h-3.5" />
+          <span>Auditoría & Excepciones</span>
+          {alerts.filter(a => !a.resuelto).length > 0 && (
+            <span className="bg-amber-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full animate-pulse">
+              {alerts.filter(a => !a.resuelto).length} Alertas
+            </span>
           )}
         </button>
       </div>
@@ -524,6 +546,100 @@ export default function AdminPage() {
                 </tbody>
               </table>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* TAB 5: AUDITORÍA Y EXCEPCIONES */}
+      {activeTab === 'auditoria' && (
+        <div className="space-y-6">
+          {/* Sección Alertas y Salvaguardas */}
+          <div className="glass-card bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs space-y-4">
+            <div className="flex items-center gap-2 border-b border-slate-100 pb-4">
+              <ShieldAlert className="w-5 h-5 text-amber-500" />
+              <div>
+                <h2 className="text-lg font-black text-[#2C2C2C]">Salvaguardas y Alertas de Excepción</h2>
+                <p className="text-xs text-slate-500 font-medium">Monitoreo activo de discrepancias de monto, firmas inválidas o fallos de envío.</p>
+              </div>
+            </div>
+
+            {alerts.length === 0 ? (
+              <p className="text-xs text-slate-500 font-medium py-4 text-center">Sin alertas activas. El sistema opera normalmente.</p>
+            ) : (
+              <div className="space-y-3">
+                {alerts.map((alt) => (
+                  <div key={alt.id} className={`p-4 rounded-2xl border flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-xs ${
+                    alt.severity === 'CRITICAL' ? 'bg-rose-50 border-rose-200 text-rose-800' : 'bg-amber-50 border-amber-200 text-amber-800'
+                  }`}>
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2 font-black uppercase text-[10px] tracking-wider">
+                        <span>[{alt.severity}]</span>
+                        <span>{alt.alert_type}</span>
+                        <span className="text-slate-400">• {new Date(alt.created_at).toLocaleString('es-CO')}</span>
+                      </div>
+                      <p className="font-semibold">{alt.message}</p>
+                    </div>
+                    <div>
+                      <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${alt.resuelto ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-200 text-amber-900 animate-pulse'}`}>
+                        {alt.resuelto ? 'Resuelto' : 'Pendiente'}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Sección Logs Crudos de Auditoría */}
+          <div className="glass-card bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs space-y-4">
+            <div className="flex items-center gap-2 border-b border-slate-100 pb-4">
+              <Activity className="w-5 h-5 text-[#1E3A8A]" />
+              <div>
+                <h2 className="text-lg font-black text-[#2C2C2C]">Historial Inmutable de Auditoría de Pagos</h2>
+                <p className="text-xs text-slate-500 font-medium">Registro cronológico de eventos crudos de Webhooks Wompi y conciliaciones automatizadas.</p>
+              </div>
+            </div>
+
+            <div className="overflow-x-auto">
+              {auditLogs.length === 0 ? (
+                <p className="text-xs text-slate-500 font-medium py-4 text-center">No hay registros de auditoría almacenados aún.</p>
+              ) : (
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b border-slate-200/80 text-slate-400 font-black uppercase text-[10px] tracking-wider">
+                      <th className="pb-3 px-2">Proveedor</th>
+                      <th className="pb-3 px-2">Evento</th>
+                      <th className="pb-3 px-2">Firma Válida</th>
+                      <th className="pb-3 px-2">Monto Esperado / Recibido</th>
+                      <th className="pb-3 px-2">Estado Previo ➔ Nuevo</th>
+                      <th className="pb-3 px-2 text-right">Fecha / Hora</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 font-medium">
+                    {auditLogs.map((log) => (
+                      <tr key={log.id} className="hover:bg-slate-50/50">
+                        <td className="py-3 px-2 uppercase font-black text-[#1E3A8A] text-[10px]">{log.provider}</td>
+                        <td className="py-3 px-2 font-mono font-bold text-slate-700">{log.event_type}</td>
+                        <td className="py-3 px-2">
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${log.signature_valid ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>
+                            {log.signature_valid ? 'Sí' : 'No'}
+                          </span>
+                        </td>
+                        <td className="py-3 px-2 font-mono">
+                          {log.monto_esperado ? `$${Number(log.monto_esperado).toLocaleString('es-CO')} COP` : '-'} / {log.monto_recibido ? `$${Number(log.monto_recibido).toLocaleString('es-CO')} COP` : '-'}
+                        </td>
+                        <td className="py-3 px-2 font-semibold">
+                          <span className="text-slate-400">{log.estado_previo || 'nuevo'}</span> ➔ <span className="text-emerald-600 font-bold">{log.estado_nuevo}</span>
+                        </td>
+                        <td className="py-3 px-2 text-right font-mono text-[11px] text-slate-500">
+                          {new Date(log.created_at).toLocaleString('es-CO')}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
           </div>
         </div>
       )}
