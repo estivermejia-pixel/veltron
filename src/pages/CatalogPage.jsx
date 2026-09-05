@@ -17,12 +17,14 @@ import ScrollParallax from '../components/effects/ScrollParallax';
 import AnimatedSection from '../components/effects/AnimatedSection';
 
 
+import ProductDetailModal from '../common/ProductDetailModal';
+
 export default function CatalogPage() {
 
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showFullDesc, setShowFullDesc] = useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
   useEffect(() => {
     async function loadData() {
@@ -135,8 +137,12 @@ export default function CatalogPage() {
                       </span>
                     </div>
 
-                    {/* IMAGEN DE VISTA PREVIA REAL DEL PRODUCTO */}
-                    <div className="relative w-full rounded-2xl overflow-hidden border border-slate-200/90 bg-white shadow-2xs group cursor-pointer">
+                    {/* IMAGEN DE VISTA PREVIA REAL DEL PRODUCTO (Abre Modal al Clic) */}
+                    <div
+                      onClick={() => setIsDetailModalOpen(true)}
+                      className="relative w-full rounded-2xl overflow-hidden border border-slate-200/90 bg-white shadow-2xs group cursor-pointer"
+                      title="Haz clic para ver el detalle completo del producto"
+                    >
                       <img
                         src="/excel_dashboard_preview.png"
                         alt="Vista previa oficial Dashboard Logístico Excel"
@@ -147,35 +153,19 @@ export default function CatalogPage() {
                       </div>
                     </div>
 
-                    {/* Descripción del Producto con Desplegable Seguir Leyendo */}
+                    {/* Descripción Breve con Botón para Abrir Modal Flotante Centrado */}
                     <div className="bg-white p-3.5 rounded-xl border border-slate-200/60 shadow-2xs space-y-2">
                       <p className="text-xs text-slate-600 font-medium leading-relaxed">
                         Contenido digital exclusivo de la semana listo para descarga inmediata con aporte o monto libre.
                       </p>
 
-                      {showFullDesc && (
-                        <motion.p
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: 'auto' }}
-                          exit={{ opacity: 0, height: 0 }}
-                          transition={{ duration: 0.2 }}
-                          className="text-xs text-slate-700 font-semibold leading-relaxed border-t border-slate-100 pt-2 text-[#1E3A8A]"
-                        >
-                          {activeProduct?.descripcion || '100% editable y totalmente conectada a bases y hojas de datos configurables, fórmulas en español, sin celdas u hojas ocultas.'}
-                        </motion.p>
-                      )}
-
                       <button
                         type="button"
-                        onClick={() => setShowFullDesc(!showFullDesc)}
-                        className="inline-flex items-center gap-1 text-[11px] font-black text-[#1E3A8A] hover:underline cursor-pointer pt-0.5"
+                        onClick={() => setIsDetailModalOpen(true)}
+                        className="inline-flex items-center gap-1.5 text-[11px] font-black text-[#1E3A8A] hover:text-[#2563EB] hover:underline cursor-pointer pt-0.5"
                       >
-                        <span>{showFullDesc ? 'Leer menos' : 'Seguir leyendo'}</span>
-                        {showFullDesc ? (
-                          <ChevronUp className="w-3.5 h-3.5" />
-                        ) : (
-                          <ChevronDown className="w-3.5 h-3.5" />
-                        )}
+                        <span>Seguir leyendo & Ver detalle completo</span>
+                        <Sparkles className="w-3.5 h-3.5 text-amber-500" />
                       </button>
                     </div>
 
@@ -213,6 +203,13 @@ export default function CatalogPage() {
         </AnimatedSection>
 
       </div>
+
+      {/* Modal Flotante Emergente Centrado de Detalle del Producto */}
+      <ProductDetailModal
+        isOpen={isDetailModalOpen}
+        onClose={() => setIsDetailModalOpen(false)}
+        onPayWompi={handlePayWompi}
+      />
     </div>
   );
 }
