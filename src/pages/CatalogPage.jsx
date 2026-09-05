@@ -172,7 +172,6 @@ export default function CatalogPage() {
                           className="inline-flex items-center gap-1.5 text-xs font-extrabold text-[#1E3A8A] hover:text-[#2563EB] hover:underline cursor-pointer"
                         >
                           <span>Ver ficha técnica y capacidades analíticas</span>
-                          <span className="text-[10px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full border border-slate-200 font-semibold">Detalle ↗</span>
                         </button>
                       </div>
                     </div>
