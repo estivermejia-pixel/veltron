@@ -67,28 +67,17 @@ export default function WhatYouGet() {
             </div>
           </motion.div>
 
-          {/* Columna Derecha: Vista previa del producto */}
+          {/* Columna Derecha: Vista previa del producto (Imagen en miniatura) */}
           <motion.div
             variants={rightVariants}
             className="lg:col-span-5 flex items-center justify-center"
           >
-            <div className="w-full h-[220px] sm:h-[260px] lg:h-[280px] bg-[#F8F9FA] rounded-[24px] sm:rounded-[28px] border border-slate-100 flex flex-col items-center justify-center gap-3 p-6 text-center">
-              {/* Ícono de estrella/destello estilo exacto */}
-              <svg
-                className="w-9 h-9 text-slate-400"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.75"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z" />
-                <circle cx="5" cy="19" r="0.75" fill="currentColor" stroke="none" />
-              </svg>
-              <span className="text-xs sm:text-[13px] font-medium text-slate-400">
-                Vista previa del producto
-              </span>
+            <div className="w-full rounded-[24px] sm:rounded-[28px] border border-slate-200/90 bg-white shadow-xs overflow-hidden group">
+              <img
+                src="/excel_dashboard_preview.png"
+                alt="Vista previa en miniatura del producto digital de la semana"
+                className="w-full h-auto object-cover group-hover:scale-[1.01] transition-transform duration-300"
+              />
             </div>
           </motion.div>
 
