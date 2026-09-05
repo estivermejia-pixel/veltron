@@ -268,25 +268,25 @@ export default function AdminPage() {
         return (
           <div className="space-y-6">
             {/* Header de Filtros y Botón de Exportación CSV */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-5 rounded-3xl border border-slate-200/80 shadow-2xs">
-              <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-2xs">
+              <div className="flex items-center gap-3 flex-wrap">
                 <span className="text-xs font-black text-slate-500 uppercase tracking-wider">Período:</span>
                 <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs font-bold">
                   <button
                     onClick={() => setRevenueRange('all')}
-                    className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${revenueRange === 'all' ? 'bg-[#1E3A8A] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
+                    className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${revenueRange === 'all' ? 'bg-[#1E3A8A] text-white shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900 font-medium'}`}
                   >
                     Todo el Historial
                   </button>
                   <button
                     onClick={() => setRevenueRange('month')}
-                    className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${revenueRange === 'month' ? 'bg-[#1E3A8A] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
+                    className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${revenueRange === 'month' ? 'bg-[#1E3A8A] text-white shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900 font-medium'}`}
                   >
                     Este Mes
                   </button>
                   <button
                     onClick={() => setRevenueRange('7d')}
-                    className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${revenueRange === '7d' ? 'bg-[#1E3A8A] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
+                    className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${revenueRange === '7d' ? 'bg-[#1E3A8A] text-white shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900 font-medium'}`}
                   >
                     Últimos 7 Días
                   </button>
@@ -295,139 +295,192 @@ export default function AdminPage() {
 
               <button
                 onClick={() => exportOrdersToCSV(orders)}
-                className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black flex items-center gap-2 shadow-xs active:scale-95 transition-all cursor-pointer"
+                className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black flex items-center gap-2 shadow-xs active:scale-95 transition-all cursor-pointer shrink-0"
               >
                 <Download className="w-4 h-4" /> Exportar Reporte Contable (.CSV)
               </button>
             </div>
 
-            {/* 3 Tarjetas KPI Principales */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="glass-card bg-linear-to-br from-blue-900 to-[#1E3A8A] text-white p-6 rounded-3xl shadow-sm space-y-2">
-                <div className="flex items-center justify-between text-blue-200 text-xs font-bold uppercase tracking-wider">
-                  <span>Ingresos Totales (COP)</span>
-                  <DollarSign className="w-4 h-4 text-[#FFD53D]" />
+            {/* 3 Tarjetas KPI Principales con Jerarquía Perfecta */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+              {/* Tarjeta 1: Ingresos Totales */}
+              <div className="glass-card bg-gradient-to-br from-blue-900 via-[#1E3A8A] to-slate-900 text-white p-6 rounded-2xl shadow-sm border border-blue-800/40 flex flex-col justify-between space-y-3 relative overflow-hidden">
+                <div className="flex items-center justify-between">
+                  <span className="text-blue-200 text-xs font-black uppercase tracking-wider">Ingresos Totales (COP)</span>
+                  <div className="w-8 h-8 rounded-xl bg-white/10 text-[#FFD53D] flex items-center justify-center shrink-0">
+                    <DollarSign className="w-4 h-4" />
+                  </div>
                 </div>
-                <div className="text-3xl font-black text-white">
-                  ${stats.totalRevenue.toLocaleString('es-CO')} <span className="text-xs font-normal text-blue-200">COP</span>
+                <div>
+                  <div className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                    ${stats.totalRevenue.toLocaleString('es-CO')} <span className="text-xs font-normal text-blue-200">COP</span>
+                  </div>
+                  <p className="text-[11px] text-blue-200/90 font-medium mt-1">Recaudación neta acumulada de órdenes aprobadas.</p>
                 </div>
-                <p className="text-[11px] text-blue-200">Recaudación neta acumulada de órdenes aprobadas.</p>
               </div>
 
-              <div className="glass-card bg-white p-6 rounded-3xl border border-slate-200/80 shadow-2xs space-y-2">
-                <div className="flex items-center justify-between text-slate-400 text-xs font-bold uppercase tracking-wider">
-                  <span>Órdenes Aprobadas</span>
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              {/* Tarjeta 2: Órdenes Aprobadas */}
+              <div className="glass-card bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs flex flex-col justify-between space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-400 text-xs font-black uppercase tracking-wider">Órdenes Aprobadas</span>
+                  <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                    <CheckCircle2 className="w-4 h-4" />
+                  </div>
                 </div>
-                <div className="text-3xl font-black text-[#2C2C2C]">
-                  {stats.totalApproved} <span className="text-xs font-bold text-slate-400">ventas</span>
+                <div>
+                  <div className="text-2xl sm:text-3xl font-black text-[#2C2C2C] tracking-tight">
+                    {stats.totalApproved} <span className="text-xs font-bold text-slate-400">ventas</span>
+                  </div>
+                  <p className="text-[11px] text-slate-500 font-medium mt-1">Transacciones confirmadas y entregadas.</p>
                 </div>
-                <p className="text-[11px] text-slate-500">Transacciones confirmadas y entregadas.</p>
               </div>
 
-              <div className="glass-card bg-white p-6 rounded-3xl border border-slate-200/80 shadow-2xs space-y-2">
-                <div className="flex items-center justify-between text-slate-400 text-xs font-bold uppercase tracking-wider">
-                  <span>Ticket Promedio por Aporte</span>
-                  <TrendingUp className="w-4 h-4 text-blue-600" />
+              {/* Tarjeta 3: Ticket Promedio por Aporte */}
+              <div className="glass-card bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs flex flex-col justify-between space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-400 text-xs font-black uppercase tracking-wider">Ticket Promedio por Aporte</span>
+                  <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                    <TrendingUp className="w-4 h-4" />
+                  </div>
                 </div>
-                <div className="text-3xl font-black text-[#2C2C2C]">
-                  ${stats.avgTicket.toLocaleString('es-CO')} <span className="text-xs font-bold text-slate-400">COP</span>
+                <div>
+                  <div className="text-2xl sm:text-3xl font-black text-[#2C2C2C] tracking-tight">
+                    ${stats.avgTicket.toLocaleString('es-CO')} <span className="text-xs font-bold text-slate-400">COP</span>
+                  </div>
+                  <p className="text-[11px] text-slate-500 font-medium mt-1">Promedio de valor de compra voluntaria por cliente.</p>
                 </div>
-                <p className="text-[11px] text-slate-500">Promedio de valor de compra voluntaria por cliente.</p>
               </div>
             </div>
 
-            {/* Gráfica Ambiental de Tendencia Diaria */}
-            <div className="glass-card bg-white p-6 rounded-3xl border border-slate-200/80 shadow-2xs space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                <div className="flex items-center gap-2">
-                  <BarChart3 className="w-5 h-5 text-[#1E3A8A]" />
+            {/* Gráfica Ambiental de Tendencia Diaria con Línea Base y Tooltip Elegante */}
+            <div className="glass-card bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs space-y-5">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3.5">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-blue-50 text-[#1E3A8A] flex items-center justify-center shrink-0">
+                    <BarChart3 className="w-4 h-4" />
+                  </div>
                   <h3 className="text-sm font-black text-[#2C2C2C]">Tendencia Diaria de Ventas</h3>
                 </div>
                 <span className="text-[11px] font-bold text-slate-400">Ingresos agrupados por día</span>
               </div>
 
               {stats.dailyTrend.length === 0 ? (
-                <p className="text-xs text-slate-400 font-medium text-center py-8">No hay datos de ingresos registrados en el período seleccionado.</p>
+                <p className="text-xs text-slate-400 font-medium text-center py-10">No hay datos de ingresos registrados en el período seleccionado.</p>
               ) : (
-                <div className="h-44 flex items-end justify-between gap-2 pt-6 px-2">
-                  {stats.dailyTrend.map((item, idx) => {
-                    const heightPercent = Math.max((item.total / maxDaily) * 100, 12);
-                    return (
-                      <div key={idx} className="flex-1 flex flex-col items-center gap-2 group h-full justify-end">
-                        <div className="text-[10px] font-mono font-bold text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-900 text-white px-1.5 py-0.5 rounded-md">
-                          ${item.total.toLocaleString('es-CO')}
+                <div className="pt-2">
+                  <div className="h-44 flex items-end justify-between gap-2.5 pb-2 border-b border-slate-200/60">
+                    {stats.dailyTrend.map((item, idx) => {
+                      const heightPercent = Math.max((item.total / maxDaily) * 100, 14);
+                      return (
+                        <div key={idx} className="flex-1 flex flex-col items-center gap-1.5 group h-full justify-end relative">
+                          {/* Tooltip flotante */}
+                          <div className="absolute -top-7 text-[10px] font-mono font-bold text-white bg-slate-900 px-2 py-0.5 rounded-md opacity-0 group-hover:opacity-100 transition-all duration-150 transform group-hover:-translate-y-1 shadow-xs pointer-events-none whitespace-nowrap z-10">
+                            ${item.total.toLocaleString('es-CO')}
+                          </div>
+                          <div
+                            style={{ height: `${heightPercent}%` }}
+                            className="w-full bg-gradient-to-t from-[#1E3A8A] to-blue-500 group-hover:from-[#1E3A8A] group-hover:to-emerald-500 rounded-t-lg transition-all duration-200 shadow-2xs"
+                          />
+                          <span className="text-[9px] font-mono font-bold text-slate-400 truncate max-w-[48px] text-center pt-1">
+                            {item.date.slice(5)}
+                          </span>
                         </div>
-                        <div
-                          style={{ height: `${heightPercent}%` }}
-                          className="w-full bg-linear-to-t from-[#1E3A8A] to-blue-500 rounded-t-lg group-hover:to-emerald-500 transition-all shadow-xs"
-                        />
-                        <span className="text-[9px] font-mono text-slate-400 truncate max-w-[50px]">
-                          {item.date.slice(5)}
-                        </span>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
               )}
             </div>
 
-            {/* Grid 2 Columnas: Desglose por Método de Pago & Ranking de Productos */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Grid 2 Columnas Perfectamente Alineado: Desglose por Método de Pago & Ranking de Productos */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Desglose Métodos de Pago */}
-              <div className="glass-card bg-white p-6 rounded-3xl border border-slate-200/80 shadow-2xs space-y-4">
-                <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-                  <PieChart className="w-5 h-5 text-blue-600" />
-                  <h3 className="text-sm font-black text-[#2C2C2C]">Canales y Métodos de Pago</h3>
+              <div className="glass-card bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs space-y-4 flex flex-col justify-between">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-3.5">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                      <PieChart className="w-4 h-4" />
+                    </div>
+                    <h3 className="text-sm font-black text-[#2C2C2C]">Canales y Métodos de Pago</h3>
+                  </div>
                 </div>
 
-                <div className="space-y-4">
-                  <div className="p-4 rounded-2xl border border-slate-100 bg-slate-50 flex items-center justify-between">
-                    <div>
-                      <div className="text-xs font-black text-[#2C2C2C]">Wompi Pasarela Segura</div>
-                      <div className="text-[10px] text-slate-400 font-bold">Tarjetas de Crédito, PSE, Nequi</div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-sm font-black text-[#1E3A8A]">${(stats.methodMap.wompi || 0).toLocaleString('es-CO')} COP</div>
-                      <div className="text-[10px] text-slate-400 font-bold">
-                        {stats.totalRevenue > 0 ? Math.round(((stats.methodMap.wompi || 0) / stats.totalRevenue) * 100) : 0}% del total
+                <div className="space-y-4 my-auto">
+                  {/* Wompi Item */}
+                  <div className="p-4 rounded-xl border border-slate-200/70 bg-slate-50/70 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-xs font-black text-[#2C2C2C]">Wompi Pasarela Segura</div>
+                        <div className="text-[10px] text-slate-400 font-bold">Tarjetas de Crédito, PSE, Nequi</div>
                       </div>
+                      <div className="text-right">
+                        <div className="text-sm font-black text-[#1E3A8A]">${(stats.methodMap.wompi || 0).toLocaleString('es-CO')} COP</div>
+                        <div className="text-[10px] text-slate-400 font-bold">
+                          {stats.totalRevenue > 0 ? Math.round(((stats.methodMap.wompi || 0) / stats.totalRevenue) * 100) : 0}% del total
+                        </div>
+                      </div>
+                    </div>
+                    {/* Barra visual de progreso */}
+                    <div className="w-full bg-slate-200/70 h-1.5 rounded-full overflow-hidden">
+                      <div
+                        className="bg-[#1E3A8A] h-full rounded-full transition-all duration-300"
+                        style={{ width: `${stats.totalRevenue > 0 ? Math.round(((stats.methodMap.wompi || 0) / stats.totalRevenue) * 100) : 0}%` }}
+                      />
                     </div>
                   </div>
 
-                  <div className="p-4 rounded-2xl border border-slate-100 bg-slate-50 flex items-center justify-between">
-                    <div>
-                      <div className="text-xs font-black text-[#2C2C2C]">Llave Bancolombia / Bre-B</div>
-                      <div className="text-[10px] text-slate-400 font-bold">Transferencia cuenta a cuenta ($0 costo)</div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-sm font-black text-emerald-700">${(stats.methodMap['bre-b'] || 0).toLocaleString('es-CO')} COP</div>
-                      <div className="text-[10px] text-slate-400 font-bold">
-                        {stats.totalRevenue > 0 ? Math.round(((stats.methodMap['bre-b'] || 0) / stats.totalRevenue) * 100) : 0}% del total
+                  {/* Llave Bancolombia Item */}
+                  <div className="p-4 rounded-xl border border-slate-200/70 bg-slate-50/70 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-xs font-black text-[#2C2C2C]">Llave Bancolombia / Bre-B</div>
+                        <div className="text-[10px] text-slate-400 font-bold">Transferencia cuenta a cuenta ($0 costo)</div>
                       </div>
+                      <div className="text-right">
+                        <div className="text-sm font-black text-emerald-700">${(stats.methodMap['bre-b'] || 0).toLocaleString('es-CO')} COP</div>
+                        <div className="text-[10px] text-slate-400 font-bold">
+                          {stats.totalRevenue > 0 ? Math.round(((stats.methodMap['bre-b'] || 0) / stats.totalRevenue) * 100) : 0}% del total
+                        </div>
+                      </div>
+                    </div>
+                    {/* Barra visual de progreso */}
+                    <div className="w-full bg-slate-200/70 h-1.5 rounded-full overflow-hidden">
+                      <div
+                        className="bg-emerald-600 h-full rounded-full transition-all duration-300"
+                        style={{ width: `${stats.totalRevenue > 0 ? Math.round(((stats.methodMap['bre-b'] || 0) / stats.totalRevenue) * 100) : 0}%` }}
+                      />
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Ranking Productos Más Vendidos */}
-              <div className="glass-card bg-white p-6 rounded-3xl border border-slate-200/80 shadow-2xs space-y-4">
-                <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-                  <TrendingUp className="w-5 h-5 text-emerald-600" />
-                  <h3 className="text-sm font-black text-[#2C2C2C]">Productos Más Vendidos</h3>
+              <div className="glass-card bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs space-y-4 flex flex-col justify-between">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-3.5">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                      <TrendingUp className="w-4 h-4" />
+                    </div>
+                    <h3 className="text-sm font-black text-[#2C2C2C]">Productos Más Vendidos</h3>
+                  </div>
                 </div>
 
                 {stats.productRanking.length === 0 ? (
-                  <p className="text-xs text-slate-400 font-medium py-4 text-center">Sin datos de ventas de productos en este período.</p>
+                  <p className="text-xs text-slate-400 font-medium py-10 text-center my-auto">Sin datos de ventas de productos en este período.</p>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="space-y-3 my-auto">
                     {stats.productRanking.slice(0, 4).map((prod, idx) => (
-                      <div key={idx} className="p-3.5 rounded-2xl border border-slate-100 bg-slate-50 flex items-center justify-between gap-3">
-                        <div className="max-w-xs truncate">
-                          <div className="text-xs font-bold text-[#2C2C2C] truncate">{prod.titulo}</div>
-                          <div className="text-[10px] text-slate-400 font-bold">{prod.ventas} {prod.ventas === 1 ? 'unidad vendida' : 'unidades vendidas'}</div>
+                      <div key={idx} className="p-3.5 rounded-xl border border-slate-200/70 bg-slate-50/70 flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-6 h-6 rounded-lg bg-blue-50 text-[#1E3A8A] font-black text-[11px] flex items-center justify-center shrink-0 border border-blue-100">
+                            #{idx + 1}
+                          </div>
+                          <div className="min-w-0">
+                            <div className="text-xs font-bold text-[#2C2C2C] truncate">{prod.titulo}</div>
+                            <div className="text-[10px] text-slate-400 font-bold">{prod.ventas} {prod.ventas === 1 ? 'unidad vendida' : 'unidades vendidas'}</div>
+                          </div>
                         </div>
-                        <div className="text-xs font-mono font-black text-[#1E3A8A] whitespace-nowrap">
+                        <div className="text-xs font-mono font-black text-[#1E3A8A] shrink-0">
                           ${prod.total.toLocaleString('es-CO')} COP
                         </div>
                       </div>
